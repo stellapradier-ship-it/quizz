@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Aquaponie — T'Air Eau</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --text: #1a1a18;
+    --text-muted: #6b6b60;
+    --border: rgba(0,0,0,0.1);
+    --bg: #FAFAF7;
+    --white: #ffffff;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--green-dark);
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--text-muted); font-weight: 300; font-size: 13px; font-family: 'DM Sans', sans-serif; display: block; letter-spacing: 0; }
+
+  /* Main container */
+  .main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .quiz-container {
+    width: 100%;
+    max-width: 620px;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 2.5rem;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .progress-count {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Step */
+  .step { display: none; animation: fadeIn 0.35s ease; }
+  .step.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .question {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+    line-height: 1.6;
+  }
+
+  /* Choices */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    text-align: left;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+
+  .choice-btn:hover {
+    border-color: var(--green);
+    background: var(--green-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(29,158,117,0.12);
+  }
+
+  .choice-btn.selected {
+    border-color: var(--green);
+    background: var(--green-light);
+    box-shadow: 0 4px 16px rgba(29,158,117,0.15);
+  }
+
+  .choice-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f0f0ea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .choice-btn.selected .choice-icon,
+  .choice-btn:hover .choice-icon {
+    background: rgba(29,158,117,0.15);
+  }
+
+  .choice-text strong {
+    display: block;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 2px;
+    color: var(--text);
+  }
+
+  .choice-text span {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.75rem;
+  }
+
+  .btn-back {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    padding: 8px 0;
+    transition: color 0.2s;
+  }
+  .btn-back:hover { color: var(--text); }
+
+  .btn-next {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 13px 32px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+  .btn-next:hover:not(:disabled) {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(29,158,117,0.3);
+  }
+  .btn-next:disabled {
+    background: #d0d0c8;
+    color: #aaa;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Capture */
+  .capture-wrap {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .capture-row { margin-bottom: 1rem; }
+  .capture-row:last-child { margin-bottom: 0; }
+  .capture-row label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .capture-row input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .capture-row input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+  }
+
+  .privacy-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .privacy-note span { font-size: 14px; margin-right: 4px; }
+
+  /* Results */
+  .result { display: none; animation: fadeIn 0.4s ease; }
+  .result.active { display: block; }
+
+  .result-header { margin-bottom: 1.75rem; }
+
+  .profile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .badge-a { background: var(--green-light); color: #085041; }
+  .badge-b { background: var(--amber-light); color: #633806; }
+  .badge-c { background: var(--coral-light); color: #4A1B0C; }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .result-intro {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Diagnosis box */
+  .diag-box {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .diag-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .diag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .diag-item:last-child { margin-bottom: 0; }
+  .diag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .dot-a { background: var(--green); }
+  .dot-b { background: var(--amber); }
+  .dot-c { background: var(--coral); }
+
+  /* Offer card */
+  .offer-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 2px solid;
+  }
+  .offer-a { border-color: var(--green); }
+  .offer-b { border-color: var(--amber); }
+  .offer-c { border-color: var(--coral); }
+
+  .offer-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .label-a { color: var(--green); }
+  .label-b { color: var(--amber); }
+  .label-c { color: var(--coral); }
+
+  .offer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .offer-price {
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    line-height: 1;
+  }
+  .price-a { color: var(--green-dark); }
+  .price-b { color: var(--amber); }
+  .price-c { color: var(--coral); }
+  .offer-price span { font-size: 15px; color: var(--text-muted); font-weight: 400; }
+
+  .offer-features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+  .offer-features li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 7px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .offer-features li:last-child { border-bottom: none; }
+  .check {
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .cta-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+  .cta-btn:hover { transform: translateY(-1px); }
+  .cta-a { background: var(--green); color: white; }
+  .cta-a:hover { background: var(--green-dark); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
+  .cta-b { background: var(--amber); color: white; }
+  .cta-b:hover { background: #996010; box-shadow: 0 6px 20px rgba(186,117,23,0.3); }
+  .cta-c { background: var(--coral); color: white; }
+  .cta-c:hover { background: #993C1D; box-shadow: 0 6px 20px rgba(216,90,48,0.3); }
+
+  .reassure {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  .other-offers {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .other-links { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .other-link {
+    font-size: 13px;
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .other-link:hover { border-color: var(--text-muted); color: var(--text); }
+
+  .restart-btn {
+    display: block;
+    text-align: center;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1.5rem;
+    text-decoration: underline;
+    width: 100%;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    background: var(--white);
+  }
+  .footer a { color: var(--green); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .question { font-size: 22px; }
+    .result-title { font-size: 24px; }
+    .offer-price { font-size: 28px; }
+    .header { padding: 1rem; }
+    .main { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    T'Air Eau
+    <span>Quiz — Trouve ton système aquaponique idéal</span>
+  </div>
+</header>
+
+<main class="main">
+  <div class="quiz-container">
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Ton diagnostic</span>
+        <span class="progress-count" id="prog-count">1 / 7</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog" style="width: 14%"></div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="step active" id="s1">
+      <span class="question-tag">Niveau de départ</span>
+      <h2 class="question">Où en es-tu aujourd'hui avec l'aquaponie ?</h2>
+      <p class="sub">Pour t'orienter vers la solution la plus adaptée à ton profil.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="1" data-v="debutant" onclick="selectAnswer(this)">
+          <div class="choice-icon">🌱</div>
+          <div class="choice-text"><strong>Je découvre complètement</strong><span>Jamais mis les mains dedans</span></div>
+        </button>
+        <button class="choice-btn" data-q="1" data-v="projet" onclick="selectAnswer(this)">
+          <div class="choice-icon">🔍</div>
+          <div class="choice-text"><strong>J'ai un projet mais rien de concret</strong><span>Je me renseigne depuis un moment</span></div>
+        </button>
+        <button class="choice-btn" data-q="1" data-v="essayé" onclick="selectAnswer(this)">
+          <div class="choice-icon">⚠️</div>
+          <div class="choice-text"><strong>J'ai essayé, ça n'a pas fonctionné</strong><span>Besoin de repartir sur de bonnes bases</span></div>
+        </button>
+        <button class="choice-btn" data-q="1" data-v="systeme" onclick="selectAnswer(this)">
+          <div class="choice-icon">🐟</div>
+          <div class="choice-text"><strong>J'ai déjà un système en cours</strong><span>Je veux l'optimiser ou l'agrandir</span></div>
+        </button>
+      </div>
+      <div class="nav"><span></span><button class="btn-next" id="n1" disabled onclick="nextStep(1)">Continuer →</button></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="step" id="s2">
+      <span class="question-tag">Objectif</span>
+      <h2 class="question">Pourquoi veux-tu un système aquaponique ?</h2>
+      <p class="sub">Ton objectif détermine le niveau d'investissement le plus logique.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="2" data-v="autonomie" onclick="selectAnswer(this)">
+          <div class="choice-icon">🥗</div>
+          <div class="choice-text"><strong>Autonomie alimentaire</strong><span>Produire mes légumes et poissons à la maison</span></div>
+        </button>
+        <button class="choice-btn" data-q="2" data-v="production" onclick="selectAnswer(this)">
+          <div class="choice-icon">📦</div>
+          <div class="choice-text"><strong>Production régulière et sérieuse</strong><span>Un système performant sur le long terme</span></div>
+        </button>
+        <button class="choice-btn" data-q="2" data-v="tranquillite" onclick="selectAnswer(this)">
+          <div class="choice-icon">😌</div>
+          <div class="choice-text"><strong>Gain de temps et tranquillité d'esprit</strong><span>Un résultat fiable sans me prendre la tête</span></div>
+        </button>
+        <button class="choice-btn" data-q="2" data-v="evolution" onclick="selectAnswer(this)">
+          <div class="choice-icon">📈</div>
+          <div class="choice-text"><strong>Projet évolutif ou rentable</strong><span>Transformer ça en activité ou en revenu</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(1)">← Retour</button><button class="btn-next" id="n2" disabled onclick="nextStep(2)">Continuer →</button></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="step" id="s3">
+      <span class="question-tag">Espace disponible</span>
+      <h2 class="question">De quel espace disposes-tu ?</h2>
+      <p class="sub">Cela détermine le type et la taille du système adapté.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="3" data-v="interieur" onclick="selectAnswer(this)">
+          <div class="choice-icon">🏠</div>
+          <div class="choice-text"><strong>Intérieur ou balcon</strong><span>Petit espace, besoin de solutions compactes</span></div>
+        </button>
+        <button class="choice-btn" data-q="3" data-v="jardin-s" onclick="selectAnswer(this)">
+          <div class="choice-icon">🌿</div>
+          <div class="choice-text"><strong>Jardin de moins de 50 m²</strong><span>Un extérieur limité mais bien exploitable</span></div>
+        </button>
+        <button class="choice-btn" data-q="3" data-v="jardin-l" onclick="selectAnswer(this)">
+          <div class="choice-icon">🌳</div>
+          <div class="choice-text"><strong>Grand jardin ou serre</strong><span>Un beau projet de grande envergure</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(2)">← Retour</button><button class="btn-next" id="n3" disabled onclick="nextStep(3)">Continuer →</button></div>
+    </div>
+
+    <!-- Q4 — clé de tri -->
+    <div class="step" id="s4">
+      <span class="question-tag">Implication</span>
+      <h2 class="question">Combien de temps veux-tu consacrer à ton système ?</h2>
+      <p class="sub">C'est souvent la réponse qui change tout.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="4" data-v="minimum" onclick="selectAnswer(this)">
+          <div class="choice-icon">⚡</div>
+          <div class="choice-text"><strong>Le minimum possible</strong><span>Je veux que ça tourne seul, sans charge mentale</span></div>
+        </button>
+        <button class="choice-btn" data-q="4" data-v="quelques" onclick="selectAnswer(this)">
+          <div class="choice-icon">🕐</div>
+          <div class="choice-text"><strong>Quelques heures par semaine</strong><span>J'ai du temps à y consacrer raisonnablement</span></div>
+        </button>
+        <button class="choice-btn" data-q="4" data-v="bricoleur" onclick="selectAnswer(this)">
+          <div class="choice-icon">🔧</div>
+          <div class="choice-text"><strong>J'aime mettre les mains dedans</strong><span>Le côté construction et DIY m'attire vraiment</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(3)">← Retour</button><button class="btn-next" id="n4" disabled onclick="nextStep(4)">Continuer →</button></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="step" id="s5">
+      <span class="question-tag">Rapport au risque</span>
+      <h2 class="question">Quelle phrase te ressemble le plus ?</h2>
+      <p class="sub">Ta façon d'aborder les défis révèle la solution idéale pour toi.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="5" data-v="guidé" onclick="selectAnswer(this)">
+          <div class="choice-icon">🧭</div>
+          <div class="choice-text"><strong>« Je préfère être guidé pour éviter les erreurs »</strong><span>Une méthode claire, pas à pas, ça me rassure</span></div>
+        </button>
+        <button class="choice-btn" data-q="5" data-v="test" onclick="selectAnswer(this)">
+          <div class="choice-icon">🧪</div>
+          <div class="choice-text"><strong>« J'apprends en testant »</strong><span>Je n'ai pas peur d'expérimenter par moi-même</span></div>
+        </button>
+        <button class="choice-btn" data-q="5" data-v="résultat" onclick="selectAnswer(this)">
+          <div class="choice-icon">🏆</div>
+          <div class="choice-text"><strong>« Je veux un résultat sûr, même si ça coûte plus »</strong><span>La performance et la fiabilité avant tout</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(4)">← Retour</button><button class="btn-next" id="n5" disabled onclick="nextStep(5)">Continuer →</button></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="step" id="s6">
+      <span class="question-tag">Peur principale</span>
+      <h2 class="question">Ce que tu veux absolument éviter :</h2>
+      <p class="sub">Identifie ton plus grand risque perçu — on y répondra directement.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="6" data-v="poissons" onclick="selectAnswer(this)">
+          <div class="choice-icon">😟</div>
+          <div class="choice-text"><strong>Tuer mes poissons</strong><span>L'angoisse du réveil devant un bac vide</span></div>
+        </button>
+        <button class="choice-btn" data-q="6" data-v="instable" onclick="selectAnswer(this)">
+          <div class="choice-icon">📉</div>
+          <div class="choice-text"><strong>Un système instable</strong><span>Des paramètres qui varient, l'incertitude permanente</span></div>
+        </button>
+        <button class="choice-btn" data-q="6" data-v="perte" onclick="selectAnswer(this)">
+          <div class="choice-icon">💸</div>
+          <div class="choice-text"><strong>Perdre du temps et de l'argent</strong><span>Investir pour se retrouver avec rien</span></div>
+        </button>
+        <button class="choice-btn" data-q="6" data-v="seul" onclick="selectAnswer(this)">
+          <div class="choice-icon">🙋</div>
+          <div class="choice-text"><strong>Être seul face aux problèmes</strong><span>Sans aide quand quelque chose déraille</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(5)">← Retour</button><button class="btn-next" id="n6" disabled onclick="nextStep(6)">Continuer →</button></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="step" id="s7">
+      <span class="question-tag">Projection</span>
+      <h2 class="question">Dans 3 mois, tu veux surtout :</h2>
+      <p class="sub">Visualise ton résultat idéal — c'est ta destination.</p>
+      <div class="choices">
+        <button class="choice-btn" data-q="7" data-v="comprendre" onclick="selectAnswer(this)">
+          <div class="choice-icon">📚</div>
+          <div class="choice-text"><strong>Comprendre parfaitement mon système</strong><span>Maîtriser la biologie, la technique, les paramètres</span></div>
+        </button>
+        <button class="choice-btn" data-q="7" data-v="produire" onclick="selectAnswer(this)">
+          <div class="choice-icon">🥬</div>
+          <div class="choice-text"><strong>Produire efficacement</strong><span>Mes premières vraies récoltes dans l'assiette</span></div>
+        </button>
+        <button class="choice-btn" data-q="7" data-v="serein" onclick="selectAnswer(this)">
+          <div class="choice-icon">✨</div>
+          <div class="choice-text"><strong>Être serein et autonome</strong><span>Un système qui tourne sans stress quotidien</span></div>
+        </button>
+        <button class="choice-btn" data-q="7" data-v="tranquille" onclick="selectAnswer(this)">
+          <div class="choice-icon">🤲</div>
+          <div class="choice-text"><strong>Ne plus me poser de questions techniques</strong><span>Quelqu'un qui a géré ça à ma place</span></div>
+        </button>
+      </div>
+      <div class="nav"><button class="btn-back" onclick="prevStep(6)">← Retour</button><button class="btn-next" id="n7" disabled onclick="nextStep(7)">Continuer →</button></div>
+    </div>
+
+    <!-- Capture email -->
+    <div class="step" id="s8">
+      <span class="question-tag">Dernière étape</span>
+      <h2 class="question">Où envoyer ton diagnostic ?</h2>
+      <p class="sub">Reçois ta recommandation personnalisée + les prochaines étapes adaptées à ton profil.</p>
+      <div class="capture-wrap">
+        <div class="capture-row">
+          <label>Prénom</label>
+          <input type="text" id="prenom" placeholder="Ton prénom" oninput="checkCapture()">
+        </div>
+        <div class="capture-row">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="ton@email.com" oninput="checkCapture()">
+        </div>
+      </div>
+      <p class="privacy-note"><span>🔒</span> Tes données sont confidentielles. Aucun spam, promis.</p>
+      <div class="nav"><button class="btn-back" onclick="prevStep(7)">← Retour</button><button class="btn-next" id="n8" disabled onclick="showResult()" style="padding: 13px 24px;">Voir mon diagnostic →</button></div>
+    </div>
+
+    <!-- Résultat A -->
+    <div class="result" id="result-a">
+      <div class="result-header">
+        <div class="profile-badge badge-a">✦ Profil A — Le Constructeur Autonome</div>
+        <h2 class="result-title" id="ra-title">Bonne nouvelle !</h2>
+        <p class="result-intro">Tu as la motivation et l'envie de comprendre — c'est l'essentiel. Sans méthode claire, tu risques des erreurs coûteuses qui auraient pu être évitées. Le vrai problème en aquaponie n'est jamais la motivation, c'est de partir dans la mauvaise direction.</p>
+      </div>
+      <div class="diag-box">
+        <p class="diag-title">Ce qui te manque aujourd'hui</p>
+        <div class="diag-item"><span class="diag-dot dot-a"></span>Une méthode structurée et validée sur le terrain</div>
+        <div class="diag-item"><span class="diag-dot dot-a"></span>Un dimensionnement adapté à TON espace et TON budget</div>
+        <div class="diag-item"><span class="diag-dot dot-a"></span>Un regard expert pour éviter les erreurs invisibles au départ</div>
+      </div>
+      <div class="offer-card offer-a">
+        <p class="offer-label label-a">Notre recommandation</p>
+        <p class="offer-name">Accompagnement T'Air Eau — 3 mois</p>
+        <p class="offer-price price-a">700 € <span>/ paiement en 1, 2 ou 3 fois</span></p>
+        <ul class="offer-features">
+          <li><span class="check">✓</span> Dimensionnement personnalisé pour ton installation</li>
+          <li><span class="check">✓</span> Méthode complète pas à pas (eau, poissons, plantes)</li>
+          <li><span class="check">✓</span> Support expert et suivi sur 3 mois</li>
+          <li><span class="check">✓</span> Accès à la communauté privée</li>
+          <li><span class="check">✓</span> Sessions live hebdomadaires</li>
+          <li><span class="check">✓</span> Garantie 30 jours satisfait ou remboursé</li>
+        </ul>
+        <button class="cta-btn cta-a" onclick="window.location.href='https://www.taireau.fr'">Découvrir l'accompagnement →</button>
+      </div>
+      <p class="reassure">Cet accompagnement existe pour t'éviter les erreurs que nous avons mis des années à corriger.</p>
+      <hr class="divider">
+      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
+      <div class="other-links">
+        <button class="other-link" onclick="forceResult('b')">Kit + Formation (3 250 €)</button>
+        <button class="other-link" onclick="forceResult('c')">Clé en main (5 000 €+)</button>
+      </div>
+      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
+    </div>
+
+    <!-- Résultat B -->
+    <div class="result" id="result-b">
+      <div class="result-header">
+        <div class="profile-badge badge-b">✦ Profil B — Le Pragmatique Sécurisé</div>
+        <h2 class="result-title" id="rb-title">Tu veux un système fiable.</h2>
+        <p class="result-intro">Tu es prêt à investir pour gagner du temps et de la sécurité. Très bon choix : en aquaponie, la conception est le point critique que 80 % des débutants sous-estiment. La majorité des systèmes DIY échouent à cause d'un mauvais choix de composants ou d'un mauvais équilibre eau/poissons/plantes.</p>
+      </div>
+      <div class="diag-box">
+        <p class="diag-title">Pourquoi le kit est la solution la plus logique pour toi</p>
+        <div class="diag-item"><span class="diag-dot dot-b"></span>Tu pars sur une base testée et validée, pas sur des essais-erreurs</div>
+        <div class="diag-item"><span class="diag-dot dot-b"></span>Les composants sont déjà optimisés pour fonctionner ensemble</div>
+        <div class="diag-item"><span class="diag-dot dot-b"></span>La formation incluse te donne l'autonomie sur le long terme</div>
+      </div>
+      <div class="offer-card offer-b">
+        <p class="offer-label label-b">Notre recommandation</p>
+        <p class="offer-name">Système en kit + Formation complète</p>
+        <p class="offer-price price-b">3 250 € <span>/ paiement en plusieurs fois possible</span></p>
+        <ul class="offer-features">
+          <li><span class="check">✓</span> Kit aquaponique complet testé et optimisé (3 000 €)</li>
+          <li><span class="check">✓</span> Formation complète pour une gestion autonome (250 €)</li>
+          <li><span class="check">✓</span> Tous les composants validés, installation rapide</li>
+          <li><span class="check">✓</span> Système évolutif selon tes ambitions</li>
+          <li><span class="check">✓</span> Support technique inclus</li>
+        </ul>
+        <button class="cta-btn cta-b" onclick="window.location.href='https://www.taireau.fr'">Voir le kit + la formation →</button>
+      </div>
+      <p class="reassure">Tu investis dans un système qui fonctionne, pas dans des essais-erreurs.</p>
+      <hr class="divider">
+      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
+      <div class="other-links">
+        <button class="other-link" onclick="forceResult('a')">Accompagnement (700 €)</button>
+        <button class="other-link" onclick="forceResult('c')">Clé en main (5 000 €+)</button>
+      </div>
+      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
+    </div>
+
+    <!-- Résultat C -->
+    <div class="result" id="result-c">
+      <div class="result-header">
+        <div class="profile-badge badge-c">✦ Profil C — Zéro Prise de Tête</div>
+        <h2 class="result-title" id="rc-title">Ton objectif est clair.</h2>
+        <p class="result-intro">Un système qui fonctionne parfaitement, sans charge mentale. Tu ne veux pas bricoler pendant des mois ni douter à chaque étape. Un système aquaponique performant dépend de l'environnement, de l'espace, des contraintes locales — impossible à standardiser à 100 % sans te connaître.</p>
+      </div>
+      <div class="diag-box">
+        <p class="diag-title">Pourquoi l'installation sur-mesure s'impose pour toi</p>
+        <div class="diag-item"><span class="diag-dot dot-c"></span>Ton environnement et tes contraintes sont uniques</div>
+        <div class="diag-item"><span class="diag-dot dot-c"></span>La mise en service experte garantit la stabilité immédiate</div>
+        <div class="diag-item"><span class="diag-dot dot-c"></span>Tu as un système stable et productif dès le premier jour</div>
+      </div>
+      <div class="offer-card offer-c">
+        <p class="offer-label label-c">Notre recommandation</p>
+        <p class="offer-name">Installation aquaponique clé en main</p>
+        <p class="offer-price price-c">À partir de 5 000 € <span>/ étude personnalisée</span></p>
+        <ul class="offer-features">
+          <li><span class="check">✓</span> Étude personnalisée de ton projet et de ton espace</li>
+          <li><span class="check">✓</span> Conception adaptée à tes contraintes spécifiques</li>
+          <li><span class="check">✓</span> Installation chez toi par l'équipe T'Air Eau</li>
+          <li><span class="check">✓</span> Mise en service complète + formation incluse</li>
+          <li><span class="check">✓</span> Suivi post-installation garanti</li>
+        </ul>
+        <button class="cta-btn cta-c" onclick="window.location.href='https://www.taireau.fr'">Réserver un appel projet →</button>
+      </div>
+      <p class="reassure">Tu n'achètes pas un système. Tu achètes la tranquillité d'esprit.</p>
+      <hr class="divider">
+      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
+      <div class="other-links">
+        <button class="other-link" onclick="forceResult('a')">Accompagnement (700 €)</button>
+        <button class="other-link" onclick="forceResult('b')">Kit + Formation (3 250 €)</button>
+      </div>
+      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  © 2025 T'Air Eau — <a href="https://www.taireau.fr">taireau.fr</a> · Mentions légales · Confidentialité
+</footer>
+
+<script>
+var answers = {};
+
+function selectAnswer(btn) {
+  var q = btn.getAttribute('data-q');
+  document.querySelectorAll('[data-q="' + q + '"]').forEach(function(b) {
+    b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+  answers[q] = btn.getAttribute('data-v');
+  var nextBtn = document.getElementById('n' + q);
+  if (nextBtn) nextBtn.disabled = false;
+}
+
+function nextStep(from) {
+  document.getElementById('s' + from).classList.remove('active');
+  var to = from + 1;
+  document.getElementById('s' + to).classList.add('active');
+  updateProgress(to);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(to) {
+  document.getElementById('s' + (to + 1)).classList.remove('active');
+  document.getElementById('s' + to).classList.add('active');
+  updateProgress(to);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(step) {
+  var pct = Math.round((step / 8) * 100);
+  document.getElementById('prog').style.width = pct + '%';
+  if (step <= 7) {
+    document.getElementById('prog-count').textContent = step + ' / 7';
+  } else {
+    document.getElementById('prog-count').textContent = 'Presque terminé !';
+  }
+}
+
+function checkCapture() {
+  var p = document.getElementById('prenom').value.trim();
+  var e = document.getElementById('email').value.trim();
+  document.getElementById('n8').disabled = !(p.length > 0 && e.indexOf('@') > 0 && e.indexOf('.') > 0);
+}
+
+function computeProfile() {
+  var score = 0;
+  if (answers[2] === 'tranquillite') score += 3;
+  if (answers[2] === 'evolution') score += 1;
+  if (answers[4] === 'minimum') score += 3;
+  if (answers[4] === 'quelques') score += 1;
+  if (answers[4] === 'bricoleur') score -= 2;
+  if (answers[5] === 'résultat') score += 3;
+  if (answers[5] === 'guidé') score += 1;
+  if (answers[5] === 'test') score -= 1;
+  if (answers[7] === 'tranquille') score += 3;
+  if (answers[7] === 'serein') score += 1;
+  if (answers[7] === 'comprendre') score -= 1;
+  if (answers[3] === 'jardin-l') score += 1;
+  if (answers[1] === 'systeme') score += 1;
+  if (score >= 6) return 'c';
+  if (score >= 2) return 'b';
+  return 'a';
+}
+
+function showResult() {
+  var prenom = document.getElementById('prenom').value.trim();
+  document.getElementById('s8').classList.remove('active');
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('prog-count').textContent = 'Diagnostic prêt !';
+  var profile = computeProfile();
+  displayResult(profile, prenom);
+}
+
+function displayResult(profile, prenom) {
+  document.querySelectorAll('.result').forEach(function(r) { r.classList.remove('active'); });
+  var r = document.getElementById('result-' + profile);
+  r.classList.add('active');
+  if (prenom) {
+    var titles = { a: 'Bonne nouvelle, ' + prenom + ' !', b: 'Tu veux un système fiable, ' + prenom + '.', c: 'Ton objectif est clair, ' + prenom + '.' };
+    var el = document.getElementById('r' + profile + '-title');
+    if (el && titles[profile]) el.textContent = titles[profile];
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function forceResult(profile) {
+  var prenom = document.getElementById('prenom') ? document.getElementById('prenom').value.trim() : '';
+  displayResult(profile, prenom);
+}
+
+function restart() {
+  answers = {};
+  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.result').forEach(function(r) { r.classList.remove('active'); });
+  document.querySelectorAll('.choice-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.querySelectorAll('.btn-next').forEach(function(b) { b.disabled = true; });
+  if (document.getElementById('prenom')) document.getElementById('prenom').value = '';
+  if (document.getElementById('email')) document.getElementById('email').value = '';
+  document.getElementById('s1').classList.add('active');
+  updateProgress(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
