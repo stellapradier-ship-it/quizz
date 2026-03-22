@@ -6,713 +6,510 @@
 <title>Quiz Aquaponie — T'Air Eau</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --green: #1D9E75;
-    --green-dark: #0F6E56;
-    --green-light: #E1F5EE;
-    --amber: #BA7517;
-    --amber-light: #FAEEDA;
-    --coral: #D85A30;
-    --coral-light: #FAECE7;
-    --text: #1a1a18;
-    --text-muted: #6b6b60;
-    --border: rgba(0,0,0,0.1);
-    --bg: #FAFAF7;
-    --white: #ffffff;
-    --radius: 14px;
-    --radius-sm: 8px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .header {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: var(--green-dark);
-    letter-spacing: -0.02em;
-  }
-  .logo span { color: var(--text-muted); font-weight: 300; font-size: 13px; font-family: 'DM Sans', sans-serif; display: block; letter-spacing: 0; }
-
-  .main {
-    flex: 1;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2.5rem 1rem 4rem;
-  }
-
-  .quiz-container { width: 100%; max-width: 620px; }
-
-  .progress-wrap { margin-bottom: 2.5rem; }
-  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .progress-label { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
-  .progress-count { font-size: 12px; color: var(--text-muted); }
-  .progress-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-  .step { display: none; animation: fadeIn 0.35s ease; }
-  .step.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .question-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--green);
-    background: var(--green-light);
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-  }
-
-  .question {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 400;
-    line-height: 1.3;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-
-  .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 1.75rem; line-height: 1.6; }
-
-  .choices { display: flex; flex-direction: column; gap: 10px; }
-
-  .choice-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 15px 18px;
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--text);
-    text-align: left;
-    transition: all 0.2s ease;
-    font-family: 'DM Sans', sans-serif;
-    width: 100%;
-  }
-  .choice-btn:hover { border-color: var(--green); background: var(--green-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(29,158,117,0.12); }
-  .choice-btn.selected { border-color: var(--green); background: var(--green-light); box-shadow: 0 4px 16px rgba(29,158,117,0.15); }
-
-  .choice-icon { width: 40px; height: 40px; border-radius: 10px; background: #f0f0ea; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: background 0.2s; }
-  .choice-btn.selected .choice-icon, .choice-btn:hover .choice-icon { background: rgba(29,158,117,0.15); }
-
-  .choice-text strong { display: block; font-weight: 500; font-size: 14px; margin-bottom: 2px; color: var(--text); }
-  .choice-text span { font-size: 12px; color: var(--text-muted); }
-
-  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; }
-
-  .btn-back { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 8px 0; transition: color 0.2s; }
-  .btn-back:hover { color: var(--text); }
-
-  .btn-next { background: var(--green); color: white; border: none; padding: 13px 32px; border-radius: 50px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s ease; letter-spacing: 0.01em; }
-  .btn-next:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
-  .btn-next:disabled { background: #d0d0c8; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .capture-wrap { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
-  .capture-row { margin-bottom: 1rem; }
-  .capture-row:last-child { margin-bottom: 0; }
-  .capture-row label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-  .capture-row input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: var(--bg); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-  .capture-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
-
-  .privacy-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 1rem; }
-
-  /* Sending state */
-  .sending-msg { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 15px; display: none; }
-  .sending-msg.active { display: block; }
-
-  .result { display: none; animation: fadeIn 0.4s ease; }
-  .result.active { display: block; }
-
-  .profile-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
-  .badge-a { background: var(--green-light); color: #085041; }
-  .badge-b { background: var(--amber-light); color: #633806; }
-  .badge-c { background: var(--coral-light); color: #4A1B0C; }
-
-  .result-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; line-height: 1.3; color: var(--text); margin-bottom: 0.75rem; }
-  .result-intro { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.75rem; }
-
-  .diag-box { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
-  .diag-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1rem; }
-  .diag-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
-  .diag-item:last-child { margin-bottom: 0; }
-  .diag-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-  .dot-a { background: var(--green); }
-  .dot-b { background: var(--amber); }
-  .dot-c { background: var(--coral); }
-
-  .offer-card { background: var(--white); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; border: 2px solid; }
-  .offer-a { border-color: var(--green); }
-  .offer-b { border-color: var(--amber); }
-  .offer-c { border-color: var(--coral); }
-
-  .offer-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
-  .label-a { color: var(--green); }
-  .label-b { color: var(--amber); }
-  .label-c { color: var(--coral); }
-
-  .offer-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: var(--text); margin-bottom: 1.25rem; }
-
-  .offer-features { list-style: none; margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
-  .offer-features li { font-size: 14px; color: var(--text); padding: 7px 0; display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid var(--border); line-height: 1.5; }
-  .offer-features li:last-child { border-bottom: none; }
-  .check { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
-
-  /* Contact block */
-  .contact-block { margin-bottom: 1rem; }
-  .contact-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.75rem; }
-  .contact-options { display: flex; flex-direction: column; gap: 10px; }
-
-  .cta-btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 50px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s ease;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-    display: block;
-    text-align: center;
-  }
-  .cta-btn:hover { transform: translateY(-1px); }
-  .cta-a { background: var(--green); color: white; }
-  .cta-a:hover { background: var(--green-dark); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
-  .cta-b { background: var(--amber); color: white; }
-  .cta-b:hover { background: #996010; box-shadow: 0 6px 20px rgba(186,117,23,0.3); }
-  .cta-c { background: var(--coral); color: white; }
-  .cta-c:hover { background: #993C1D; box-shadow: 0 6px 20px rgba(216,90,48,0.3); }
-  .cta-outline { background: transparent; border: 1.5px solid; }
-  .cta-outline-a { border-color: var(--green); color: var(--green); }
-  .cta-outline-a:hover { background: var(--green-light); }
-  .cta-outline-b { border-color: var(--amber); color: var(--amber); }
-  .cta-outline-b:hover { background: var(--amber-light); }
-  .cta-outline-c { border-color: var(--coral); color: var(--coral); }
-  .cta-outline-c:hover { background: var(--coral-light); }
-
-  .reassure { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-  .other-offers { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 1rem; }
-  .other-links { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .other-link { font-size: 13px; padding: 7px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--white); color: var(--text-muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-  .other-link:hover { border-color: var(--text-muted); color: var(--text); }
-
-  .restart-btn { display: block; text-align: center; background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 1.5rem; text-decoration: underline; width: 100%; }
-
-  .footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--white); }
-  .footer a { color: var(--green); text-decoration: none; }
-
-  /* Video embed placeholder */
-  .video-wrap { background: #f0f0ea; border-radius: var(--radius); padding: 2rem; text-align: center; margin-bottom: 1.25rem; border: 1.5px dashed var(--border); }
-  .video-wrap p { font-size: 14px; color: var(--text-muted); margin-top: 0.5rem; }
-
-  @media (max-width: 480px) {
-    .question { font-size: 22px; }
-    .result-title { font-size: 24px; }
-    .header { padding: 1rem; }
-    .main { padding: 1.5rem 1rem 3rem; }
-  }
+:root {
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --green-light: #E1F5EE;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --coral: #D85A30;
+  --coral-light: #FAECE7;
+  --text: #1a1a18;
+  --muted: #6b6b60;
+  --border: rgba(0,0,0,0.1);
+  --bg: #FAFAF7;
+  --white: #ffffff;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+.hdr { background: var(--white); border-bottom: 1px solid var(--border); padding: 1rem 2rem; }
+.logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--green-dark); }
+.logo small { color: var(--muted); font-weight: 300; font-size: 13px; font-family: 'DM Sans', sans-serif; display: block; }
+.main { flex: 1; display: flex; justify-content: center; padding: 2.5rem 1rem 4rem; }
+.wrap { width: 100%; max-width: 620px; }
+.prog-wrap { margin-bottom: 2.5rem; }
+.prog-meta { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.prog-label { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.prog-ct { font-size: 12px; color: var(--muted); }
+.prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-bar { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s ease; }
+.step { display: none; }
+.step.on { display: block; animation: up 0.35s ease; }
+@keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.tag { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: var(--green-light); padding: 3px 10px; border-radius: 20px; margin-bottom: 1rem; }
+.qtext { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; line-height: 1.3; margin-bottom: 0.5rem; }
+.qsub { font-size: 14px; color: var(--muted); margin-bottom: 1.75rem; line-height: 1.6; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; align-items: center; gap: 14px; padding: 15px 18px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text); text-align: left; transition: all 0.2s; font-family: 'DM Sans', sans-serif; width: 100%; }
+.opt:hover { border-color: var(--green); background: var(--green-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(29,158,117,0.12); }
+.opt.picked { border-color: var(--green); background: var(--green-light); }
+.ico { width: 40px; height: 40px; border-radius: 10px; background: #f0f0ea; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.opt.picked .ico, .opt:hover .ico { background: rgba(29,158,117,0.15); }
+.opt strong { display: block; font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+.opt span { font-size: 12px; color: var(--muted); }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; }
+.btn-bk { background: none; border: none; color: var(--muted); font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 8px 0; }
+.btn-bk:hover { color: var(--text); }
+.btn-nx { background: var(--green); color: white; border: none; padding: 13px 32px; border-radius: 50px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.btn-nx:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
+.btn-nx:disabled { background: #d0d0c8; color: #aaa; cursor: not-allowed; }
+.cap-box { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
+.cap-row { margin-bottom: 1rem; }
+.cap-row:last-child { margin-bottom: 0; }
+.cap-row label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.cap-row input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: var(--bg); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+.cap-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+.privacy { font-size: 12px; color: var(--muted); text-align: center; margin-top: 1rem; }
+.sending { display: none; text-align: center; padding: 2rem; color: var(--muted); font-size: 15px; }
+.sending.on { display: block; }
+.res { display: none; }
+.res.on { display: block; animation: up 0.4s ease; }
+.badge { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+.ba { background: var(--green-light); color: #085041; }
+.bb { background: var(--amber-light); color: #633806; }
+.bc { background: var(--coral-light); color: #4A1B0C; }
+.rtitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; line-height: 1.3; margin-bottom: 0.75rem; }
+.rintro { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 1.75rem; }
+.diag { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+.dtitle { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 1rem; }
+.ditem { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; margin-bottom: 8px; line-height: 1.5; }
+.ditem:last-child { margin-bottom: 0; }
+.dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.da { background: var(--green); }
+.db { background: var(--amber); }
+.dc { background: var(--coral); }
+.card { background: var(--white); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; border: 2px solid; }
+.ca { border-color: var(--green); }
+.cb { border-color: var(--amber); }
+.cc { border-color: var(--coral); }
+.clabel { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.la { color: var(--green); }
+.lb { color: var(--amber); }
+.lc { color: var(--coral); }
+.cname { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; margin-bottom: 1.25rem; }
+.feats { list-style: none; margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+.feats li { font-size: 14px; padding: 7px 0; display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid var(--border); line-height: 1.5; }
+.feats li:last-child { border-bottom: none; }
+.ck { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.ctct-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.75rem; }
+.ctct-opts { display: flex; flex-direction: column; gap: 10px; }
+.abtn { width: 100%; padding: 15px; border: none; border-radius: 50px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; text-decoration: none; display: block; text-align: center; }
+.abtn:hover { transform: translateY(-1px); }
+.abtn-a { background: var(--green); color: white; }
+.abtn-a:hover { background: var(--green-dark); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
+.abtn-b { background: var(--amber); color: white; }
+.abtn-b:hover { background: #996010; box-shadow: 0 6px 20px rgba(186,117,23,0.3); }
+.abtn-c { background: var(--coral); color: white; }
+.abtn-c:hover { background: #993C1D; box-shadow: 0 6px 20px rgba(216,90,48,0.3); }
+.abtn-ol { background: transparent; border: 1.5px solid; }
+.abtn-ol-a { border-color: var(--green); color: var(--green); }
+.abtn-ol-a:hover { background: var(--green-light); }
+.abtn-ol-b { border-color: var(--amber); color: var(--amber); }
+.abtn-ol-b:hover { background: var(--amber-light); }
+.abtn-ol-c { border-color: var(--coral); color: var(--coral); }
+.abtn-ol-c:hover { background: var(--coral-light); }
+.reassure { font-size: 13px; color: var(--muted); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+.other-lbl { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 1rem; }
+.other-links { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.olink { font-size: 13px; padding: 7px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--white); color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.olink:hover { border-color: var(--muted); color: var(--text); }
+.restart { display: block; text-align: center; background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 1.5rem; text-decoration: underline; width: 100%; }
+.ftr { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); background: var(--white); }
+.ftr a { color: var(--green); text-decoration: none; }
+@media (max-width: 480px) { .qtext { font-size: 22px; } .rtitle { font-size: 24px; } .hdr { padding: 1rem; } .main { padding: 1.5rem 1rem 3rem; } }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="logo">
-    T'Air Eau
-    <span>Quiz — Trouve ton système aquaponique idéal</span>
-  </div>
+<header class="hdr">
+  <div class="logo">T'Air Eau <small>Quiz — Trouve ton système aquaponique idéal</small></div>
 </header>
 
 <main class="main">
-  <div class="quiz-container">
+<div class="wrap">
 
-    <div class="progress-wrap">
-      <div class="progress-meta">
-        <span class="progress-label">Ton diagnostic</span>
-        <span class="progress-count" id="prog-count">1 / 7</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="prog" style="width: 14%"></div>
-      </div>
+  <div class="prog-wrap">
+    <div class="prog-meta">
+      <span class="prog-label">Ton diagnostic</span>
+      <span class="prog-ct" id="pct">1 / 7</span>
     </div>
-
-    <!-- Q1 -->
-    <div class="step active" id="s1">
-      <span class="question-tag">Niveau de départ</span>
-      <h2 class="question">Où en es-tu aujourd'hui avec l'aquaponie ?</h2>
-      <p class="sub">Pour t'orienter vers la solution la plus adaptée à ton profil.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="1" data-v="debutant" onclick="selectAnswer(this)">
-          <div class="choice-icon">🌱</div>
-          <div class="choice-text"><strong>Je découvre complètement</strong><span>Jamais mis les mains dedans</span></div>
-        </button>
-        <button class="choice-btn" data-q="1" data-v="projet" onclick="selectAnswer(this)">
-          <div class="choice-icon">🔍</div>
-          <div class="choice-text"><strong>J'ai un projet mais rien de concret</strong><span>Je me renseigne depuis un moment</span></div>
-        </button>
-        <button class="choice-btn" data-q="1" data-v="essayé" onclick="selectAnswer(this)">
-          <div class="choice-icon">⚠️</div>
-          <div class="choice-text"><strong>J'ai essayé, ça n'a pas fonctionné</strong><span>Besoin de repartir sur de bonnes bases</span></div>
-        </button>
-        <button class="choice-btn" data-q="1" data-v="systeme" onclick="selectAnswer(this)">
-          <div class="choice-icon">🐟</div>
-          <div class="choice-text"><strong>J'ai déjà un système en cours</strong><span>Je veux l'optimiser ou l'agrandir</span></div>
-        </button>
-      </div>
-      <div class="nav"><span></span><button class="btn-next" id="n1" disabled onclick="nextStep(1)">Continuer →</button></div>
-    </div>
-
-    <!-- Q2 -->
-    <div class="step" id="s2">
-      <span class="question-tag">Objectif</span>
-      <h2 class="question">Pourquoi veux-tu un système aquaponique ?</h2>
-      <p class="sub">Ton objectif détermine la solution la plus logique pour toi.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="2" data-v="autonomie" onclick="selectAnswer(this)">
-          <div class="choice-icon">🥗</div>
-          <div class="choice-text"><strong>Autonomie alimentaire</strong><span>Produire mes légumes et poissons à la maison</span></div>
-        </button>
-        <button class="choice-btn" data-q="2" data-v="production" onclick="selectAnswer(this)">
-          <div class="choice-icon">📦</div>
-          <div class="choice-text"><strong>Production régulière et sérieuse</strong><span>Un système performant sur le long terme</span></div>
-        </button>
-        <button class="choice-btn" data-q="2" data-v="tranquillite" onclick="selectAnswer(this)">
-          <div class="choice-icon">😌</div>
-          <div class="choice-text"><strong>Gain de temps et tranquillité d'esprit</strong><span>Un résultat fiable sans me prendre la tête</span></div>
-        </button>
-        <button class="choice-btn" data-q="2" data-v="evolution" onclick="selectAnswer(this)">
-          <div class="choice-icon">📈</div>
-          <div class="choice-text"><strong>Projet évolutif ou rentable</strong><span>Transformer ça en activité ou en revenu</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(1)">← Retour</button><button class="btn-next" id="n2" disabled onclick="nextStep(2)">Continuer →</button></div>
-    </div>
-
-    <!-- Q3 -->
-    <div class="step" id="s3">
-      <span class="question-tag">Espace disponible</span>
-      <h2 class="question">De quel espace disposes-tu ?</h2>
-      <p class="sub">Cela détermine le type et la taille du système adapté.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="3" data-v="interieur" onclick="selectAnswer(this)">
-          <div class="choice-icon">🏠</div>
-          <div class="choice-text"><strong>Intérieur ou balcon</strong><span>Petit espace, besoin de solutions compactes</span></div>
-        </button>
-        <button class="choice-btn" data-q="3" data-v="jardin-s" onclick="selectAnswer(this)">
-          <div class="choice-icon">🌿</div>
-          <div class="choice-text"><strong>Jardin de moins de 50 m²</strong><span>Un extérieur limité mais bien exploitable</span></div>
-        </button>
-        <button class="choice-btn" data-q="3" data-v="jardin-l" onclick="selectAnswer(this)">
-          <div class="choice-icon">🌳</div>
-          <div class="choice-text"><strong>Grand jardin ou serre</strong><span>Un beau projet de grande envergure</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(2)">← Retour</button><button class="btn-next" id="n3" disabled onclick="nextStep(3)">Continuer →</button></div>
-    </div>
-
-    <!-- Q4 -->
-    <div class="step" id="s4">
-      <span class="question-tag">Implication</span>
-      <h2 class="question">Combien de temps veux-tu consacrer à ton système ?</h2>
-      <p class="sub">C'est souvent la réponse qui change tout.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="4" data-v="minimum" onclick="selectAnswer(this)">
-          <div class="choice-icon">⚡</div>
-          <div class="choice-text"><strong>Le minimum possible</strong><span>Je veux que ça tourne seul, sans charge mentale</span></div>
-        </button>
-        <button class="choice-btn" data-q="4" data-v="quelques" onclick="selectAnswer(this)">
-          <div class="choice-icon">🕐</div>
-          <div class="choice-text"><strong>Quelques heures par semaine</strong><span>J'ai du temps à y consacrer raisonnablement</span></div>
-        </button>
-        <button class="choice-btn" data-q="4" data-v="bricoleur" onclick="selectAnswer(this)">
-          <div class="choice-icon">🔧</div>
-          <div class="choice-text"><strong>J'aime mettre les mains dedans</strong><span>Le côté construction et DIY m'attire vraiment</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(3)">← Retour</button><button class="btn-next" id="n4" disabled onclick="nextStep(4)">Continuer →</button></div>
-    </div>
-
-    <!-- Q5 -->
-    <div class="step" id="s5">
-      <span class="question-tag">Rapport au risque</span>
-      <h2 class="question">Quelle phrase te ressemble le plus ?</h2>
-      <p class="sub">Ta façon d'aborder les défis révèle la solution idéale pour toi.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="5" data-v="guidé" onclick="selectAnswer(this)">
-          <div class="choice-icon">🧭</div>
-          <div class="choice-text"><strong>« Je préfère être guidé pour éviter les erreurs »</strong><span>Une méthode claire, pas à pas, ça me rassure</span></div>
-        </button>
-        <button class="choice-btn" data-q="5" data-v="test" onclick="selectAnswer(this)">
-          <div class="choice-icon">🧪</div>
-          <div class="choice-text"><strong>« J'apprends en testant »</strong><span>Je n'ai pas peur d'expérimenter par moi-même</span></div>
-        </button>
-        <button class="choice-btn" data-q="5" data-v="résultat" onclick="selectAnswer(this)">
-          <div class="choice-icon">🏆</div>
-          <div class="choice-text"><strong>« Je veux un résultat sûr, même si ça coûte plus »</strong><span>La performance et la fiabilité avant tout</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(4)">← Retour</button><button class="btn-next" id="n5" disabled onclick="nextStep(5)">Continuer →</button></div>
-    </div>
-
-    <!-- Q6 -->
-    <div class="step" id="s6">
-      <span class="question-tag">Peur principale</span>
-      <h2 class="question">Ce que tu veux absolument éviter :</h2>
-      <p class="sub">Identifie ton plus grand risque perçu — on y répondra directement.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="6" data-v="poissons" onclick="selectAnswer(this)">
-          <div class="choice-icon">😟</div>
-          <div class="choice-text"><strong>Tuer mes poissons</strong><span>L'angoisse du réveil devant un bac vide</span></div>
-        </button>
-        <button class="choice-btn" data-q="6" data-v="instable" onclick="selectAnswer(this)">
-          <div class="choice-icon">📉</div>
-          <div class="choice-text"><strong>Un système instable</strong><span>Des paramètres qui varient, l'incertitude permanente</span></div>
-        </button>
-        <button class="choice-btn" data-q="6" data-v="perte" onclick="selectAnswer(this)">
-          <div class="choice-icon">💸</div>
-          <div class="choice-text"><strong>Perdre du temps et de l'argent</strong><span>Investir pour se retrouver avec rien</span></div>
-        </button>
-        <button class="choice-btn" data-q="6" data-v="seul" onclick="selectAnswer(this)">
-          <div class="choice-icon">🙋</div>
-          <div class="choice-text"><strong>Être seul face aux problèmes</strong><span>Sans aide quand quelque chose déraille</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(5)">← Retour</button><button class="btn-next" id="n6" disabled onclick="nextStep(6)">Continuer →</button></div>
-    </div>
-
-    <!-- Q7 -->
-    <div class="step" id="s7">
-      <span class="question-tag">Projection</span>
-      <h2 class="question">Dans 3 mois, tu veux surtout :</h2>
-      <p class="sub">Visualise ton résultat idéal — c'est ta destination.</p>
-      <div class="choices">
-        <button class="choice-btn" data-q="7" data-v="comprendre" onclick="selectAnswer(this)">
-          <div class="choice-icon">📚</div>
-          <div class="choice-text"><strong>Comprendre parfaitement mon système</strong><span>Maîtriser la biologie, la technique, les paramètres</span></div>
-        </button>
-        <button class="choice-btn" data-q="7" data-v="produire" onclick="selectAnswer(this)">
-          <div class="choice-icon">🥬</div>
-          <div class="choice-text"><strong>Produire efficacement</strong><span>Mes premières vraies récoltes dans l'assiette</span></div>
-        </button>
-        <button class="choice-btn" data-q="7" data-v="serein" onclick="selectAnswer(this)">
-          <div class="choice-icon">✨</div>
-          <div class="choice-text"><strong>Être serein et autonome</strong><span>Un système qui tourne sans stress quotidien</span></div>
-        </button>
-        <button class="choice-btn" data-q="7" data-v="tranquille" onclick="selectAnswer(this)">
-          <div class="choice-icon">🤲</div>
-          <div class="choice-text"><strong>Ne plus me poser de questions techniques</strong><span>Quelqu'un qui a géré ça à ma place</span></div>
-        </button>
-      </div>
-      <div class="nav"><button class="btn-back" onclick="prevStep(6)">← Retour</button><button class="btn-next" id="n7" disabled onclick="nextStep(7)">Continuer →</button></div>
-    </div>
-
-    <!-- Capture email -->
-    <div class="step" id="s8">
-      <span class="question-tag">Dernière étape</span>
-      <h2 class="question">Où envoyer ton diagnostic ?</h2>
-      <p class="sub">Reçois ta recommandation personnalisée + les prochaines étapes adaptées à ton profil.</p>
-      <div class="capture-wrap">
-        <div class="capture-row">
-          <label>Prénom</label>
-          <input type="text" id="prenom" placeholder="Ton prénom" oninput="checkCapture()">
-        </div>
-        <div class="capture-row">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="ton@email.com" oninput="checkCapture()">
-        </div>
-      </div>
-      <p class="privacy-note">🔒 Tes données sont confidentielles. Aucun spam, promis.</p>
-      <div class="nav"><button class="btn-back" onclick="prevStep(7)">← Retour</button><button class="btn-next" id="n8" disabled onclick="submitAndShow()">Voir mon diagnostic →</button></div>
-    </div>
-
-    <!-- Sending state -->
-    <div class="sending-msg" id="sending">
-      ⏳ Enregistrement de ton diagnostic en cours...
-    </div>
-
-    <!-- ===== RÉSULTAT A — Accompagnement formation ===== -->
-    <div class="result" id="result-a">
-      <div class="profile-badge badge-a">✦ Profil A — Le Constructeur Autonome</div>
-      <h2 class="result-title" id="ra-title">Bonne nouvelle !</h2>
-      <p class="result-intro">Tu as la motivation et l'envie de comprendre — c'est l'essentiel. Sans méthode claire, tu risques des erreurs coûteuses qui auraient pu être évitées. Notre accompagnement est fait exactement pour toi.</p>
-
-      <div class="diag-box">
-        <p class="diag-title">Ce qui te manque aujourd'hui</p>
-        <div class="diag-item"><span class="diag-dot dot-a"></span>Une méthode structurée et validée sur le terrain</div>
-        <div class="diag-item"><span class="diag-dot dot-a"></span>Un dimensionnement adapté à TON espace et TON budget</div>
-        <div class="diag-item"><span class="diag-dot dot-a"></span>Un regard expert pour éviter les erreurs invisibles au départ</div>
-      </div>
-
-      <div class="offer-card offer-a">
-        <p class="offer-label label-a">Notre recommandation</p>
-        <p class="offer-name">Accompagnement T'Air Eau — Formation 3 mois</p>
-        <ul class="offer-features">
-          <li><span class="check">✓</span> Optimisation de l'emplacement de ton installation</li>
-          <li><span class="check">✓</span> Méthode complète pas à pas (eau, poissons, plantes)</li>
-          <li><span class="check">✓</span> Support expert et suivi sur 3 mois</li>
-          <li><span class="check">✓</span> Accès à la communauté privée</li>
-          <li><span class="check">✓</span> Sessions live hebdomadaires</li>
-        </ul>
-
-        <div class="contact-block">
-          <p class="contact-label">Contacter Stella pour en savoir plus</p>
-          <div class="contact-options">
-            <a href="tel:+33661335488" class="cta-btn cta-a">📞 Appeler Stella — 06 61 33 54 88</a>
-            <a href="/cdn-cgi/l/email-protection#55313c323c21303939341521343c273034207b33276a2620373f30362168113038343b313070676531723c3b333a273834213c3a3b706765787067651436363a382534323b3038303b21706765333a273834213c3a3b73373a312c68173a3b3f3a20277067650621303939347067167065147065141f72343c7067652796fc34393c2696fc706765393070676524203c2f7067650172143c2770676510342070676530217067653f30706765263a203d343c2130706765303b7067652634233a3c277067652539202670676526202770676539723436363a382534323b3038303b21706765333a273834213c3a3b7b" class="cta-btn cta-outline cta-outline-a">✉️ Écrire à Stella — <span class="__cf_email__" data-cfemail="c1a5a8a6a8b5a4adada081b5a0a8b3a4a0b4efa7b3">[email&#160;protected]</span></a>
-          </div>
-        </div>
-      </div>
-
-      <p class="reassure">Cet accompagnement existe pour t'éviter les erreurs que nous avons mis des années à corriger.</p>
-      <hr class="divider">
-      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
-      <div class="other-links">
-        <button class="other-link" onclick="forceResult('b')">Kit aquaponique</button>
-        <button class="other-link" onclick="forceResult('c')">Installation clé en main</button>
-      </div>
-      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
-    </div>
-
-    <!-- ===== RÉSULTAT B — Kit ===== -->
-    <div class="result" id="result-b">
-      <div class="profile-badge badge-b">✦ Profil B — Le Pragmatique Sécurisé</div>
-      <h2 class="result-title" id="rb-title">Tu veux un système fiable.</h2>
-      <p class="result-intro">Tu es prêt à investir pour gagner du temps et de la sécurité. Très bon choix : en aquaponie, la conception est le point critique que 80 % des débutants sous-estiment. Notre kit est fait pour toi.</p>
-
-      <div class="diag-box">
-        <p class="diag-title">Pourquoi le kit est la solution la plus logique pour toi</p>
-        <div class="diag-item"><span class="diag-dot dot-b"></span>Tu pars sur une base testée et validée, pas sur des essais-erreurs</div>
-        <div class="diag-item"><span class="diag-dot dot-b"></span>Les composants sont déjà optimisés pour fonctionner ensemble</div>
-        <div class="diag-item"><span class="diag-dot dot-b"></span>Une vidéo explicative t'accompagne pour l'installation</div>
-      </div>
-
-      <div class="offer-card offer-b">
-        <p class="offer-label label-b">Notre recommandation</p>
-        <p class="offer-name">Système aquaponique en kit T'Air Eau</p>
-        <ul class="offer-features">
-          <li><span class="check">✓</span> Kit aquaponique complet testé et optimisé</li>
-          <li><span class="check">✓</span> Tous les composants validés, installation rapide</li>
-          <li><span class="check">✓</span> Vidéo explicative d'installation incluse</li>
-          <li><span class="check">✓</span> Système évolutif selon tes ambitions</li>
-        </ul>
-
-        <div class="contact-block">
-          <p class="contact-label">Contacter Stella pour commander</p>
-          <div class="contact-options">
-            <a href="tel:+33661335488" class="cta-btn cta-b">📞 Appeler Stella — 06 61 33 54 88</a>
-            <a href="/cdn-cgi/l/email-protection#22464b454b56474e4e436256434b504743570c44501d515740484741561f66474f434c464707101246054b4c444d504f43564b4d4c0710120f071012694b5607101243535743524d4c4b53574704404d465b1f604d4c484d57500710127156474e4e430710610712630712636805434b07101250e18b434e4b51e18b0710124e4707101253574b580710127605634b5007101267435707101247560710124847071012514d574a434b5647071012474c0710125143544d4b50071012524e57510710125157500710124e47071012494b5607101243535743524d4c4b5357470c" class="cta-btn cta-outline cta-outline-b">✉️ Écrire à Stella — <span class="__cf_email__" data-cfemail="2b4f424c425f4e47474a6b5f4a42594e4a5e054d59">[email&#160;protected]</span></a>
-          </div>
-        </div>
-      </div>
-
-      <p class="reassure">Tu investis dans un système qui fonctionne, pas dans des essais-erreurs.</p>
-      <hr class="divider">
-      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
-      <div class="other-links">
-        <button class="other-link" onclick="forceResult('a')">Accompagnement formation</button>
-        <button class="other-link" onclick="forceResult('c')">Installation clé en main</button>
-      </div>
-      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
-    </div>
-
-    <!-- ===== RÉSULTAT C — Clé en main ===== -->
-    <div class="result" id="result-c">
-      <div class="profile-badge badge-c">✦ Profil C — Zéro Prise de Tête</div>
-      <h2 class="result-title" id="rc-title">Ton objectif est clair.</h2>
-      <p class="result-intro">Un système qui fonctionne parfaitement, sans charge mentale. Tu ne veux pas bricoler pendant des mois ni douter à chaque étape. Notre installation sur-mesure est la solution qui te correspond.</p>
-
-      <div class="diag-box">
-        <p class="diag-title">Pourquoi l'installation sur-mesure s'impose pour toi</p>
-        <div class="diag-item"><span class="diag-dot dot-c"></span>Ton environnement et tes contraintes sont uniques</div>
-        <div class="diag-item"><span class="diag-dot dot-c"></span>La mise en service experte garantit la stabilité immédiate</div>
-        <div class="diag-item"><span class="diag-dot dot-c"></span>Tu as un système stable et productif dès le premier jour</div>
-      </div>
-
-      <div class="offer-card offer-c">
-        <p class="offer-label label-c">Notre recommandation</p>
-        <p class="offer-name">Installation aquaponique clé en main</p>
-        <ul class="offer-features">
-          <li><span class="check">✓</span> Étude personnalisée de ton projet et de ton espace</li>
-          <li><span class="check">✓</span> Conception adaptée à tes contraintes spécifiques</li>
-          <li><span class="check">✓</span> Installation chez toi par l'équipe T'Air Eau</li>
-          <li><span class="check">✓</span> Mise en service complète</li>
-          <li><span class="check">✓</span> Suivi post-installation garanti</li>
-        </ul>
-
-        <div class="contact-block">
-          <p class="contact-label">Contacter Timothée pour ton projet</p>
-          <div class="contact-options">
-            <a href="tel:+33607502376" class="cta-btn cta-c">📞 Appeler Timothée — 06 07 50 23 76</a>
-            <a href="/cdn-cgi/l/email-protection#86f5e7f3f4e3eaa8f2efebe9f2eee3e3c6e1ebe7efeaa8e5e9ebb9f5f3e4ece3e5f2bbc2e3ebe7e8e2e3a3b4b6e2e3a3b4b6e2e3f0eff5a3b4b6aba3b4b6cfe8f5f2e7eaeae7f2efe9e8a3b4b6e5ea452fa3b4b6e3e8a3b4b6ebe7efe8a0e4e9e2ffbbc4e9e8ece9f3f4a3b4b6d2efebe9f2ee452fe3a3b4c5a3b6c7a3b6c7cca1e7efa3b4b6f4452fe7eaeff5452fa3b4b6eae3a3b4b6f7f3effca3b4b6d2a1c7eff4a3b4b6c3e7f3a3b4b6e3f2a3b4b6ece3a3b4b6f5e9f3eee7eff2e3a3b4b6e2eff5e5f3f2e3f4a3b4b6e2a1f3e8e3a3b4b6efe8f5f2e7eaeae7f2efe9e8a3b4b6e5ea452fa3b4b6e3e8a3b4b6ebe7efe8a8" class="cta-btn cta-outline cta-outline-c">✉️ Écrire à Timothée — <span class="__cf_email__" data-cfemail="f685978384939ad8829f9b99829e9393b6919b979f9ad895999b">[email&#160;protected]</span></a>
-          </div>
-        </div>
-      </div>
-
-      <p class="reassure">Tu n'achètes pas un système. Tu achètes la tranquillité d'esprit.</p>
-      <hr class="divider">
-      <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
-      <div class="other-links">
-        <button class="other-link" onclick="forceResult('a')">Accompagnement formation</button>
-        <button class="other-link" onclick="forceResult('b')">Kit aquaponique</button>
-      </div>
-      <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
-    </div>
-
+    <div class="prog-track"><div class="prog-bar" id="pbar" style="width:14%"></div></div>
   </div>
+
+  <div class="step on" id="q1">
+    <span class="tag">Niveau de départ</span>
+    <h2 class="qtext">Où en es-tu aujourd'hui avec l'aquaponie ?</h2>
+    <p class="qsub">Pour t'orienter vers la solution la plus adaptée à ton profil.</p>
+    <div class="opts">
+      <button class="opt" data-q="1" data-v="debutant"><div class="ico">🌱</div><div><strong>Je découvre complètement</strong><span>Jamais mis les mains dedans</span></div></button>
+      <button class="opt" data-q="1" data-v="projet"><div class="ico">🔍</div><div><strong>J'ai un projet mais rien de concret</strong><span>Je me renseigne depuis un moment</span></div></button>
+      <button class="opt" data-q="1" data-v="essaye"><div class="ico">⚠️</div><div><strong>J'ai essayé, ça n'a pas fonctionné</strong><span>Besoin de repartir sur de bonnes bases</span></div></button>
+      <button class="opt" data-q="1" data-v="systeme"><div class="ico">🐟</div><div><strong>J'ai déjà un système en cours</strong><span>Je veux l'optimiser ou l'agrandir</span></div></button>
+    </div>
+    <div class="nav"><span></span><button class="btn-nx" id="nx1" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q2">
+    <span class="tag">Objectif</span>
+    <h2 class="qtext">Pourquoi veux-tu un système aquaponique ?</h2>
+    <p class="qsub">Ton objectif détermine la solution la plus logique pour toi.</p>
+    <div class="opts">
+      <button class="opt" data-q="2" data-v="autonomie"><div class="ico">🥗</div><div><strong>Autonomie alimentaire</strong><span>Produire mes légumes et poissons à la maison</span></div></button>
+      <button class="opt" data-q="2" data-v="production"><div class="ico">📦</div><div><strong>Production régulière et sérieuse</strong><span>Un système performant sur le long terme</span></div></button>
+      <button class="opt" data-q="2" data-v="tranquillite"><div class="ico">😌</div><div><strong>Gain de temps et tranquillité d'esprit</strong><span>Un résultat fiable sans me prendre la tête</span></div></button>
+      <button class="opt" data-q="2" data-v="evolution"><div class="ico">📈</div><div><strong>Projet évolutif ou rentable</strong><span>Transformer ça en activité ou en revenu</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk2">← Retour</button><button class="btn-nx" id="nx2" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q3">
+    <span class="tag">Espace disponible</span>
+    <h2 class="qtext">De quel espace disposes-tu ?</h2>
+    <p class="qsub">Cela détermine le type et la taille du système adapté.</p>
+    <div class="opts">
+      <button class="opt" data-q="3" data-v="interieur"><div class="ico">🏠</div><div><strong>Intérieur ou balcon</strong><span>Petit espace, solutions compactes</span></div></button>
+      <button class="opt" data-q="3" data-v="jardins"><div class="ico">🌿</div><div><strong>Jardin de moins de 50 m²</strong><span>Un extérieur limité mais bien exploitable</span></div></button>
+      <button class="opt" data-q="3" data-v="jardinl"><div class="ico">🌳</div><div><strong>Grand jardin ou serre</strong><span>Un beau projet de grande envergure</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk3">← Retour</button><button class="btn-nx" id="nx3" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q4">
+    <span class="tag">Implication</span>
+    <h2 class="qtext">Combien de temps veux-tu consacrer à ton système ?</h2>
+    <p class="qsub">C'est souvent la réponse qui change tout.</p>
+    <div class="opts">
+      <button class="opt" data-q="4" data-v="minimum"><div class="ico">⚡</div><div><strong>Le minimum possible</strong><span>Je veux que ça tourne seul, sans charge mentale</span></div></button>
+      <button class="opt" data-q="4" data-v="quelques"><div class="ico">🕐</div><div><strong>Quelques heures par semaine</strong><span>J'ai du temps à y consacrer raisonnablement</span></div></button>
+      <button class="opt" data-q="4" data-v="bricoleur"><div class="ico">🔧</div><div><strong>J'aime mettre les mains dedans</strong><span>Le côté construction et DIY m'attire vraiment</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk4">← Retour</button><button class="btn-nx" id="nx4" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q5">
+    <span class="tag">Rapport au risque</span>
+    <h2 class="qtext">Quelle phrase te ressemble le plus ?</h2>
+    <p class="qsub">Ta façon d'aborder les défis révèle la solution idéale pour toi.</p>
+    <div class="opts">
+      <button class="opt" data-q="5" data-v="guide"><div class="ico">🧭</div><div><strong>« Je préfère être guidé pour éviter les erreurs »</strong><span>Une méthode claire, pas à pas, ça me rassure</span></div></button>
+      <button class="opt" data-q="5" data-v="test"><div class="ico">🧪</div><div><strong>« J'apprends en testant »</strong><span>Je n'ai pas peur d'expérimenter par moi-même</span></div></button>
+      <button class="opt" data-q="5" data-v="resultat"><div class="ico">🏆</div><div><strong>« Je veux un résultat sûr, même si ça coûte plus »</strong><span>La performance et la fiabilité avant tout</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk5">← Retour</button><button class="btn-nx" id="nx5" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q6">
+    <span class="tag">Peur principale</span>
+    <h2 class="qtext">Ce que tu veux absolument éviter :</h2>
+    <p class="qsub">Identifie ton plus grand risque perçu — on y répondra directement.</p>
+    <div class="opts">
+      <button class="opt" data-q="6" data-v="poissons"><div class="ico">😟</div><div><strong>Tuer mes poissons</strong><span>L'angoisse du réveil devant un bac vide</span></div></button>
+      <button class="opt" data-q="6" data-v="instable"><div class="ico">📉</div><div><strong>Un système instable</strong><span>Des paramètres qui varient, l'incertitude permanente</span></div></button>
+      <button class="opt" data-q="6" data-v="perte"><div class="ico">💸</div><div><strong>Perdre du temps et de l'argent</strong><span>Investir pour se retrouver avec rien</span></div></button>
+      <button class="opt" data-q="6" data-v="seul"><div class="ico">🙋</div><div><strong>Être seul face aux problèmes</strong><span>Sans aide quand quelque chose déraille</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk6">← Retour</button><button class="btn-nx" id="nx6" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q7">
+    <span class="tag">Projection</span>
+    <h2 class="qtext">Dans 3 mois, tu veux surtout :</h2>
+    <p class="qsub">Visualise ton résultat idéal — c'est ta destination.</p>
+    <div class="opts">
+      <button class="opt" data-q="7" data-v="comprendre"><div class="ico">📚</div><div><strong>Comprendre parfaitement mon système</strong><span>Maîtriser la biologie, la technique, les paramètres</span></div></button>
+      <button class="opt" data-q="7" data-v="produire"><div class="ico">🥬</div><div><strong>Produire efficacement</strong><span>Mes premières vraies récoltes dans l'assiette</span></div></button>
+      <button class="opt" data-q="7" data-v="serein"><div class="ico">✨</div><div><strong>Être serein et autonome</strong><span>Un système qui tourne sans stress quotidien</span></div></button>
+      <button class="opt" data-q="7" data-v="tranquille"><div class="ico">🤲</div><div><strong>Ne plus me poser de questions techniques</strong><span>Quelqu'un qui a géré ça à ma place</span></div></button>
+    </div>
+    <div class="nav"><button class="btn-bk" id="bk7">← Retour</button><button class="btn-nx" id="nx7" disabled>Continuer →</button></div>
+  </div>
+
+  <div class="step" id="q8">
+    <span class="tag">Dernière étape</span>
+    <h2 class="qtext">Où envoyer ton diagnostic ?</h2>
+    <p class="qsub">Reçois ta recommandation personnalisée + les prochaines étapes adaptées à ton profil.</p>
+    <div class="cap-box">
+      <div class="cap-row"><label>Prénom</label><input type="text" id="inp-prenom" placeholder="Ton prénom"></div>
+      <div class="cap-row"><label>Email</label><input type="email" id="inp-email" placeholder="ton@email.com"></div>
+    </div>
+    <p class="privacy">🔒 Tes données sont confidentielles. Aucun spam, promis.</p>
+    <div class="nav"><button class="btn-bk" id="bk8">← Retour</button><button class="btn-nx" id="nx8" disabled>Voir mon diagnostic →</button></div>
+  </div>
+
+  <div class="sending" id="sending">⏳ Enregistrement de ton diagnostic en cours...</div>
+
+  <!-- RESULTAT A -->
+  <div class="res" id="res-a">
+    <div class="badge ba">✦ Profil A — Le Constructeur Autonome</div>
+    <h2 class="rtitle" id="title-a">Bonne nouvelle !</h2>
+    <p class="rintro">Tu as la motivation et l'envie de comprendre — c'est l'essentiel. Sans méthode claire, tu risques des erreurs coûteuses qui auraient pu être évitées. Notre accompagnement est fait exactement pour toi.</p>
+    <div class="diag">
+      <p class="dtitle">Ce qui te manque aujourd'hui</p>
+      <div class="ditem"><span class="dot da"></span>Une méthode structurée et validée sur le terrain</div>
+      <div class="ditem"><span class="dot da"></span>Une optimisation de l'emplacement de ton installation</div>
+      <div class="ditem"><span class="dot da"></span>Un regard expert pour éviter les erreurs invisibles au départ</div>
+    </div>
+    <div class="card ca">
+      <p class="clabel la">Notre recommandation</p>
+      <p class="cname">Accompagnement T'Air Eau — Formation 3 mois</p>
+      <ul class="feats">
+        <li><span class="ck">✓</span> Optimisation de l'emplacement de ton installation</li>
+        <li><span class="ck">✓</span> Méthode complète pas à pas (eau, poissons, plantes)</li>
+        <li><span class="ck">✓</span> Support expert et suivi sur 3 mois</li>
+        <li><span class="ck">✓</span> Accès à la communauté privée</li>
+        <li><span class="ck">✓</span> Sessions live hebdomadaires</li>
+      </ul>
+      <p class="ctct-label">Contacter Stella pour en savoir plus</p>
+      <div class="ctct-opts">
+        <a href="tel:+33661335488" class="abtn abtn-a">📞 Appeler Stella — 06 61 33 54 88</a>
+        <a href="mailto:digitella@taireau.fr?subject=Demande%20formation&body=Bonjour%20Stella%2C%20j%27ai%20r%C3%A9alis%C3%A9%20le%20quiz%20T%27Air%20Eau%20et%20souhaite%20en%20savoir%20plus%20sur%20l%27accompagnement%20formation." class="abtn abtn-ol abtn-ol-a">✉️ Écrire à Stella — digitella@taireau.fr</a>
+      </div>
+    </div>
+    <p class="reassure">Cet accompagnement existe pour t'éviter les erreurs que nous avons mis des années à corriger.</p>
+    <hr class="divider">
+    <p class="other-lbl">Tu veux comparer avec les autres formules ?</p>
+    <div class="other-links">
+      <button class="olink" id="see-b-from-a">Kit aquaponique</button>
+      <button class="olink" id="see-c-from-a">Installation clé en main</button>
+    </div>
+    <button class="restart" id="restart-a">Recommencer le quiz</button>
+  </div>
+
+  <!-- RESULTAT B -->
+  <div class="res" id="res-b">
+    <div class="badge bb">✦ Profil B — Le Pragmatique Sécurisé</div>
+    <h2 class="rtitle" id="title-b">Tu veux un système fiable.</h2>
+    <p class="rintro">Tu es prêt à investir pour gagner du temps et de la sécurité. Très bon choix : en aquaponie, la conception est le point critique que 80 % des débutants sous-estiment. Notre kit est fait pour toi.</p>
+    <div class="diag">
+      <p class="dtitle">Pourquoi le kit est la solution la plus logique pour toi</p>
+      <div class="ditem"><span class="dot db"></span>Tu pars sur une base testée et validée, pas sur des essais-erreurs</div>
+      <div class="ditem"><span class="dot db"></span>Les composants sont déjà optimisés pour fonctionner ensemble</div>
+      <div class="ditem"><span class="dot db"></span>Une vidéo explicative t'accompagne pour l'installation</div>
+    </div>
+    <div class="card cb">
+      <p class="clabel lb">Notre recommandation</p>
+      <p class="cname">Système aquaponique en kit T'Air Eau</p>
+      <ul class="feats">
+        <li><span class="ck">✓</span> Kit aquaponique complet testé et optimisé</li>
+        <li><span class="ck">✓</span> Tous les composants validés, installation rapide</li>
+        <li><span class="ck">✓</span> Vidéo explicative d'installation incluse</li>
+        <li><span class="ck">✓</span> Système évolutif selon tes ambitions</li>
+      </ul>
+      <p class="ctct-label">Contacter Stella pour commander</p>
+      <div class="ctct-opts">
+        <a href="tel:+33661335488" class="abtn abtn-b">📞 Appeler Stella — 06 61 33 54 88</a>
+        <a href="mailto:digitella@taireau.fr?subject=Demande%20kit%20aquaponique&body=Bonjour%20Stella%2C%20j%27ai%20r%C3%A9alis%C3%A9%20le%20quiz%20T%27Air%20Eau%20et%20souhaite%20en%20savoir%20plus%20sur%20le%20kit%20aquaponique." class="abtn abtn-ol abtn-ol-b">✉️ Écrire à Stella — digitella@taireau.fr</a>
+      </div>
+    </div>
+    <p class="reassure">Tu investis dans un système qui fonctionne, pas dans des essais-erreurs.</p>
+    <hr class="divider">
+    <p class="other-lbl">Tu veux comparer avec les autres formules ?</p>
+    <div class="other-links">
+      <button class="olink" id="see-a-from-b">Accompagnement formation</button>
+      <button class="olink" id="see-c-from-b">Installation clé en main</button>
+    </div>
+    <button class="restart" id="restart-b">Recommencer le quiz</button>
+  </div>
+
+  <!-- RESULTAT C -->
+  <div class="res" id="res-c">
+    <div class="badge bc">✦ Profil C — Zéro Prise de Tête</div>
+    <h2 class="rtitle" id="title-c">Ton objectif est clair.</h2>
+    <p class="rintro">Un système qui fonctionne parfaitement, sans charge mentale. Tu ne veux pas bricoler pendant des mois ni douter à chaque étape. Notre installation sur-mesure est la solution qui te correspond.</p>
+    <div class="diag">
+      <p class="dtitle">Pourquoi l'installation sur-mesure s'impose pour toi</p>
+      <div class="ditem"><span class="dot dc"></span>Ton environnement et tes contraintes sont uniques</div>
+      <div class="ditem"><span class="dot dc"></span>La mise en service experte garantit la stabilité immédiate</div>
+      <div class="ditem"><span class="dot dc"></span>Tu as un système stable et productif dès le premier jour</div>
+    </div>
+    <div class="card cc">
+      <p class="clabel lc">Notre recommandation</p>
+      <p class="cname">Installation aquaponique clé en main</p>
+      <ul class="feats">
+        <li><span class="ck">✓</span> Étude personnalisée de ton projet et de ton espace</li>
+        <li><span class="ck">✓</span> Conception adaptée à tes contraintes spécifiques</li>
+        <li><span class="ck">✓</span> Installation chez toi par l'équipe T'Air Eau</li>
+        <li><span class="ck">✓</span> Mise en service complète</li>
+        <li><span class="ck">✓</span> Suivi post-installation garanti</li>
+      </ul>
+      <p class="ctct-label">Contacter Timothée pour ton projet</p>
+      <div class="ctct-opts">
+        <a href="tel:+33607502376" class="abtn abtn-c">📞 Appeler Timothée — 06 07 50 23 76</a>
+        <a href="mailto:saurel.timothee@gmail.com?subject=Demande%20cl%C3%A9%20en%20main&body=Bonjour%20Timoth%C3%A9e%2C%20j%27ai%20r%C3%A9alis%C3%A9%20le%20quiz%20T%27Air%20Eau%20et%20souhaite%20discuter%20d%27une%20installation%20cl%C3%A9%20en%20main." class="abtn abtn-ol abtn-ol-c">✉️ Écrire à Timothée — saurel.timothee@gmail.com</a>
+      </div>
+    </div>
+    <p class="reassure">Tu n'achètes pas un système. Tu achètes la tranquillité d'esprit.</p>
+    <hr class="divider">
+    <p class="other-lbl">Tu veux comparer avec les autres formules ?</p>
+    <div class="other-links">
+      <button class="olink" id="see-a-from-c">Accompagnement formation</button>
+      <button class="olink" id="see-b-from-c">Kit aquaponique</button>
+    </div>
+    <button class="restart" id="restart-c">Recommencer le quiz</button>
+  </div>
+
+</div>
 </main>
 
-<footer class="footer">
-  © 2025 T'Air Eau — <a href="https://www.taireau.fr">taireau.fr</a> · Mentions légales · Confidentialité
+<footer class="ftr">
+  &copy; 2025 T'Air Eau &mdash; <a href="https://www.taireau.fr">taireau.fr</a> &middot; Mentions légales &middot; Confidentialité
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ============================================================
 // REMPLACE CETTE URL par ton URL Google Apps Script
-// (voir le guide d'installation Google Sheets ci-dessous)
 // ============================================================
-var GOOGLE_SCRIPT_URL = 'COLLE_TON_URL_ICI';
+var SHEET_URL = 'COLLE_TON_URL_ICI';
 
-var answers = {};
-var labelQ1 = { debutant: 'Découvre complètement', projet: 'Projet sans concret', essayé: 'A essayé sans succès', systeme: 'Système en cours' };
-var labelQ2 = { autonomie: 'Autonomie alimentaire', production: 'Production sérieuse', tranquillite: 'Tranquillité', evolution: 'Projet évolutif' };
-var labelQ3 = { interieur: 'Intérieur / balcon', 'jardin-s': 'Jardin < 50m²', 'jardin-l': 'Grand jardin / serre' };
-var labelQ4 = { minimum: 'Minimum possible', quelques: 'Quelques heures/semaine', bricoleur: 'DIY passionné' };
-var labelQ5 = { 'guidé': 'Préfère être guidé', test: 'Apprend en testant', 'résultat': 'Veut résultat sûr' };
-var labelQ6 = { poissons: 'Peur de tuer les poissons', instable: 'Peur système instable', perte: 'Peur de perdre argent/temps', seul: 'Peur d\'être seul' };
-var labelQ7 = { comprendre: 'Comprendre le système', produire: 'Produire efficacement', serein: 'Être serein', tranquille: 'Zéro question technique' };
-var profileLabels = { a: 'Profil A — Constructeur Autonome', b: 'Profil B — Pragmatique Sécurisé', c: 'Profil C — Zéro Prise de Tête' };
+var ans = {};
+var stepOrder = [1,2,3,4,5,6,7,8];
 
-function selectAnswer(btn) {
-  var q = btn.getAttribute('data-q');
-  document.querySelectorAll('[data-q="' + q + '"]').forEach(function(b) { b.classList.remove('selected'); });
-  btn.classList.add('selected');
-  answers[q] = btn.getAttribute('data-v');
-  var nextBtn = document.getElementById('n' + q);
-  if (nextBtn) nextBtn.disabled = false;
+var labQ1 = {debutant:'Découvre complètement', projet:'Projet sans concret', essaye:'A essayé sans succès', systeme:'Système en cours'};
+var labQ2 = {autonomie:'Autonomie alimentaire', production:'Production sérieuse', tranquillite:'Tranquillité', evolution:'Projet évolutif'};
+var labQ3 = {interieur:'Intérieur / balcon', jardins:'Jardin < 50m²', jardinl:'Grand jardin / serre'};
+var labQ4 = {minimum:'Minimum possible', quelques:'Quelques heures/semaine', bricoleur:'DIY passionné'};
+var labQ5 = {guide:'Préfère être guidé', test:'Apprend en testant', resultat:'Veut résultat sûr'};
+var labQ6 = {poissons:'Peur de tuer les poissons', instable:'Peur système instable', perte:'Peur de perdre argent/temps', seul:'Peur être seul'};
+var labQ7 = {comprendre:'Comprendre le système', produire:'Produire efficacement', serein:'Être serein', tranquille:'Zéro question technique'};
+
+function goTo(id) {
+  document.querySelectorAll('.step, .res, .sending').forEach(function(el){ el.classList.remove('on'); });
+  var el = document.getElementById(id);
+  if (el) el.classList.add('on');
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function nextStep(from) {
-  document.getElementById('s' + from).classList.remove('active');
-  document.getElementById('s' + (from + 1)).classList.add('active');
-  updateProgress(from + 1);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function prevStep(to) {
-  document.getElementById('s' + (to + 1)).classList.remove('active');
-  document.getElementById('s' + to).classList.add('active');
-  updateProgress(to);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function updateProgress(step) {
+function setProgress(step) {
   var pct = Math.round((step / 8) * 100);
-  document.getElementById('prog').style.width = pct + '%';
-  document.getElementById('prog-count').textContent = step <= 7 ? (step + ' / 7') : 'Presque terminé !';
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('pct').textContent = step <= 7 ? (step + ' / 7') : 'Presque terminé !';
 }
 
-function checkCapture() {
-  var p = document.getElementById('prenom').value.trim();
-  var e = document.getElementById('email').value.trim();
-  document.getElementById('n8').disabled = !(p.length > 0 && e.indexOf('@') > 0 && e.indexOf('.') > 0);
-}
-
-function computeProfile() {
-  var score = 0;
-  if (answers[2] === 'tranquillite') score += 3;
-  if (answers[2] === 'evolution') score += 1;
-  if (answers[4] === 'minimum') score += 3;
-  if (answers[4] === 'quelques') score += 1;
-  if (answers[4] === 'bricoleur') score -= 2;
-  if (answers[5] === 'résultat') score += 3;
-  if (answers[5] === 'guidé') score += 1;
-  if (answers[5] === 'test') score -= 1;
-  if (answers[7] === 'tranquille') score += 3;
-  if (answers[7] === 'serein') score += 1;
-  if (answers[7] === 'comprendre') score -= 1;
-  if (answers[3] === 'jardin-l') score += 1;
-  if (answers[1] === 'systeme') score += 1;
-  if (score >= 6) return 'c';
-  if (score >= 2) return 'b';
+function calcProfile() {
+  var s = 0;
+  if (ans[2] === 'tranquillite') s += 3;
+  if (ans[2] === 'evolution') s += 1;
+  if (ans[4] === 'minimum') s += 3;
+  if (ans[4] === 'quelques') s += 1;
+  if (ans[4] === 'bricoleur') s -= 2;
+  if (ans[5] === 'resultat') s += 3;
+  if (ans[5] === 'guide') s += 1;
+  if (ans[5] === 'test') s -= 1;
+  if (ans[7] === 'tranquille') s += 3;
+  if (ans[7] === 'serein') s += 1;
+  if (ans[7] === 'comprendre') s -= 1;
+  if (ans[3] === 'jardinl') s += 1;
+  if (ans[1] === 'systeme') s += 1;
+  if (s >= 6) return 'c';
+  if (s >= 2) return 'b';
   return 'a';
 }
 
-function submitAndShow() {
-  var prenom = document.getElementById('prenom').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var profile = computeProfile();
-
-  // Hide step 8, show sending
-  document.getElementById('s8').classList.remove('active');
-  document.getElementById('sending').classList.add('active');
-  document.getElementById('prog').style.width = '100%';
-  document.getElementById('prog-count').textContent = 'Diagnostic prêt !';
-
-  // Build data payload
-  var data = {
-    prenom: prenom,
-    email: email,
-    profil: profileLabels[profile],
-    q1_niveau: labelQ1[answers[1]] || '',
-    q2_objectif: labelQ2[answers[2]] || '',
-    q3_espace: labelQ3[answers[3]] || '',
-    q4_temps: labelQ4[answers[4]] || '',
-    q5_attitude: labelQ5[answers[5]] || '',
-    q6_peur: labelQ6[answers[6]] || '',
-    q7_projection: labelQ7[answers[7]] || '',
-    date: new Date().toLocaleString('fr-FR')
+function showRes(p, prenom) {
+  var titles = {
+    a: prenom ? 'Bonne nouvelle, ' + prenom + ' !' : 'Bonne nouvelle !',
+    b: prenom ? 'Tu veux un système fiable, ' + prenom + '.' : 'Tu veux un système fiable.',
+    c: prenom ? 'Ton objectif est clair, ' + prenom + '.' : 'Ton objectif est clair.'
   };
-
-  // Send to Google Sheets (if URL configured)
-  if (GOOGLE_SCRIPT_URL !== 'COLLE_TON_URL_ICI') {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).catch(function() {
-      // Silently fail — show result anyway
-    });
-  }
-
-  // Show result after short delay
-  setTimeout(function() {
-    document.getElementById('sending').classList.remove('active');
-    displayResult(profile, prenom);
-  }, 800);
+  document.getElementById('title-a').textContent = titles.a;
+  document.getElementById('title-b').textContent = titles.b;
+  document.getElementById('title-c').textContent = titles.c;
+  document.getElementById('pbar').style.width = '100%';
+  document.getElementById('pct').textContent = 'Diagnostic prêt !';
+  goTo('res-' + p);
 }
 
-function displayResult(profile, prenom) {
-  document.querySelectorAll('.result').forEach(function(r) { r.classList.remove('active'); });
-  document.getElementById('result-' + profile).classList.add('active');
-  var titles = { a: 'Bonne nouvelle, ' + prenom +
+function doReset() {
+  ans = {};
+  document.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('picked'); });
+  document.querySelectorAll('.btn-nx').forEach(function(b){ b.disabled = true; });
+  document.getElementById('inp-prenom').value = '';
+  document.getElementById('inp-email').value = '';
+  setProgress(1);
+  goTo('q1');
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+
+  // Option clicks
+  document.querySelectorAll('.opt').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var q = btn.getAttribute('data-q');
+      var v = btn.getAttribute('data-v');
+      document.querySelectorAll('[data-q="' + q + '"]').forEach(function(b){ b.classList.remove('picked'); });
+      btn.classList.add('picked');
+      ans[parseInt(q)] = v;
+      var nx = document.getElementById('nx' + q);
+      if (nx) nx.disabled = false;
+    });
+  });
+
+  // Next buttons
+  for (var i = 1; i <= 7; i++) {
+    (function(n) {
+      var nx = document.getElementById('nx' + n);
+      if (nx) nx.addEventListener('click', function() { goTo('q' + (n+1)); setProgress(n+1); });
+    })(i);
+  }
+
+  // Back buttons
+  for (var j = 2; j <= 8; j++) {
+    (function(n) {
+      var bk = document.getElementById('bk' + n);
+      if (bk) bk.addEventListener('click', function() { goTo('q' + (n-1)); setProgress(n-1); });
+    })(j);
+  }
+
+  // Capture inputs
+  function checkCap() {
+    var p = document.getElementById('inp-prenom').value.trim();
+    var e = document.getElementById('inp-email').value.trim();
+    document.getElementById('nx8').disabled = !(p.length > 0 && e.indexOf('@') > 0 && e.indexOf('.') > 0);
+  }
+  document.getElementById('inp-prenom').addEventListener('input', checkCap);
+  document.getElementById('inp-email').addEventListener('input', checkCap);
+
+  // Submit
+  document.getElementById('nx8').addEventListener('click', function() {
+    var prenom = document.getElementById('inp-prenom').value.trim();
+    var email = document.getElementById('inp-email').value.trim();
+    var profile = calcProfile();
+
+    goTo('sending');
+    document.getElementById('pbar').style.width = '100%';
+
+    var data = {
+      prenom: prenom, email: email,
+      profil: {a:'Profil A — Constructeur Autonome', b:'Profil B — Pragmatique Sécurisé', c:'Profil C — Zéro Prise de Tête'}[profile],
+      q1: labQ1[ans[1]] || '', q2: labQ2[ans[2]] || '', q3: labQ3[ans[3]] || '',
+      q4: labQ4[ans[4]] || '', q5: labQ5[ans[5]] || '', q6: labQ6[ans[6]] || '',
+      q7: labQ7[ans[7]] || '', date: new Date().toLocaleString('fr-FR')
+    };
+
+    if (SHEET_URL !== 'COLLE_TON_URL_ICI') {
+      fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).catch(function(){});
+    }
+
+    setTimeout(function() { showRes(profile, prenom); }, 800);
+  });
+
+  // Compare buttons
+  document.getElementById('see-b-from-a').addEventListener('click', function(){ showRes('b', ''); });
+  document.getElementById('see-c-from-a').addEventListener('click', function(){ showRes('c', ''); });
+  document.getElementById('see-a-from-b').addEventListener('click', function(){ showRes('a', ''); });
+  document.getElementById('see-c-from-b').addEventListener('click', function(){ showRes('c', ''); });
+  document.getElementById('see-a-from-c').addEventListener('click', function(){ showRes('a', ''); });
+  document.getElementById('see-b-from-c').addEventListener('click', function(){ showRes('b', ''); });
+
+  // Restart buttons
+  document.getElementById('restart-a').addEventListener('click', doReset);
+  document.getElementById('restart-b').addEventListener('click', doReset);
+  document.getElementById('restart-c').addEventListener('click', doReset);
+
+});
+</script>
+</body>
+</html>
