@@ -489,7 +489,7 @@ window.addEventListener('DOMContentLoaded', function() {
       q7: labQ7[ans[7]] || '', date: new Date().toLocaleString('fr-FR')
     };
 
-    if (SHEET_URL !== 'COLLE_TON_URL_ICI') {
+    if (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbzqlq_rc4-7Q_nASFfxcxxbx28gNvn45zMM18BD8FS3ghOf2Ckn88XRKDAdxEGtn6cr/exec') {
       fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).catch(function(){});
     }
 
