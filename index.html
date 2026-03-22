@@ -34,7 +34,6 @@
     flex-direction: column;
   }
 
-  /* Header */
   .header {
     background: var(--white);
     border-bottom: 1px solid var(--border);
@@ -51,7 +50,6 @@
   }
   .logo span { color: var(--text-muted); font-weight: 300; font-size: 13px; font-family: 'DM Sans', sans-serif; display: block; letter-spacing: 0; }
 
-  /* Main container */
   .main {
     flex: 1;
     display: flex;
@@ -60,46 +58,15 @@
     padding: 2.5rem 1rem 4rem;
   }
 
-  .quiz-container {
-    width: 100%;
-    max-width: 620px;
-  }
+  .quiz-container { width: 100%; max-width: 620px; }
 
-  /* Progress */
-  .progress-wrap {
-    margin-bottom: 2.5rem;
-  }
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .progress-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .progress-count {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .progress-track {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--green);
-    border-radius: 2px;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .progress-wrap { margin-bottom: 2.5rem; }
+  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-label { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .progress-count { font-size: 12px; color: var(--text-muted); }
+  .progress-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-  /* Step */
   .step { display: none; animation: fadeIn 0.35s ease; }
   .step.active { display: block; }
 
@@ -130,14 +97,8 @@
     margin-bottom: 0.5rem;
   }
 
-  .sub {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 1.75rem;
-    line-height: 1.6;
-  }
+  .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 1.75rem; line-height: 1.6; }
 
-  /* Choices */
   .choices { display: flex; flex-direction: column; gap: 10px; }
 
   .choice-btn {
@@ -156,280 +117,78 @@
     font-family: 'DM Sans', sans-serif;
     width: 100%;
   }
+  .choice-btn:hover { border-color: var(--green); background: var(--green-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(29,158,117,0.12); }
+  .choice-btn.selected { border-color: var(--green); background: var(--green-light); box-shadow: 0 4px 16px rgba(29,158,117,0.15); }
 
-  .choice-btn:hover {
-    border-color: var(--green);
-    background: var(--green-light);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(29,158,117,0.12);
-  }
+  .choice-icon { width: 40px; height: 40px; border-radius: 10px; background: #f0f0ea; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: background 0.2s; }
+  .choice-btn.selected .choice-icon, .choice-btn:hover .choice-icon { background: rgba(29,158,117,0.15); }
 
-  .choice-btn.selected {
-    border-color: var(--green);
-    background: var(--green-light);
-    box-shadow: 0 4px 16px rgba(29,158,117,0.15);
-  }
+  .choice-text strong { display: block; font-weight: 500; font-size: 14px; margin-bottom: 2px; color: var(--text); }
+  .choice-text span { font-size: 12px; color: var(--text-muted); }
 
-  .choice-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: #f0f0ea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    transition: background 0.2s;
-  }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; }
 
-  .choice-btn.selected .choice-icon,
-  .choice-btn:hover .choice-icon {
-    background: rgba(29,158,117,0.15);
-  }
-
-  .choice-text strong {
-    display: block;
-    font-weight: 500;
-    font-size: 14px;
-    margin-bottom: 2px;
-    color: var(--text);
-  }
-
-  .choice-text span {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  /* Navigation */
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1.75rem;
-  }
-
-  .btn-back {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 14px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    padding: 8px 0;
-    transition: color 0.2s;
-  }
+  .btn-back { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 8px 0; transition: color 0.2s; }
   .btn-back:hover { color: var(--text); }
 
-  .btn-next {
-    background: var(--green);
-    color: white;
-    border: none;
-    padding: 13px 32px;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s ease;
-    letter-spacing: 0.01em;
-  }
-  .btn-next:hover:not(:disabled) {
-    background: var(--green-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(29,158,117,0.3);
-  }
-  .btn-next:disabled {
-    background: #d0d0c8;
-    color: #aaa;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
+  .btn-next { background: var(--green); color: white; border: none; padding: 13px 32px; border-radius: 50px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s ease; letter-spacing: 0.01em; }
+  .btn-next:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,158,117,0.3); }
+  .btn-next:disabled { background: #d0d0c8; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-  /* Capture */
-  .capture-wrap {
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
+  .capture-wrap { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
   .capture-row { margin-bottom: 1rem; }
   .capture-row:last-child { margin-bottom: 0; }
-  .capture-row label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .capture-row input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 15px;
-    color: var(--text);
-    background: var(--bg);
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .capture-row input:focus {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
-  }
+  .capture-row label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .capture-row input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: var(--bg); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .capture-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
 
-  .privacy-note {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 1rem;
-  }
-  .privacy-note span { font-size: 14px; margin-right: 4px; }
+  .privacy-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 1rem; }
 
-  /* Results */
+  /* Sending state */
+  .sending-msg { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 15px; display: none; }
+  .sending-msg.active { display: block; }
+
   .result { display: none; animation: fadeIn 0.4s ease; }
   .result.active { display: block; }
 
-  .result-header { margin-bottom: 1.75rem; }
-
-  .profile-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-  }
+  .profile-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
   .badge-a { background: var(--green-light); color: #085041; }
   .badge-b { background: var(--amber-light); color: #633806; }
   .badge-c { background: var(--coral-light); color: #4A1B0C; }
 
-  .result-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1.3;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-  }
+  .result-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; line-height: 1.3; color: var(--text); margin-bottom: 0.75rem; }
+  .result-intro { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.75rem; }
 
-  .result-intro {
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 1.75rem;
-  }
-
-  /* Diagnosis box */
-  .diag-box {
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-  .diag-title {
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-  }
-  .diag-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
+  .diag-box { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .diag-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1rem; }
+  .diag-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
   .diag-item:last-child { margin-bottom: 0; }
-  .diag-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-top: 6px;
-    flex-shrink: 0;
-  }
+  .diag-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
   .dot-a { background: var(--green); }
   .dot-b { background: var(--amber); }
   .dot-c { background: var(--coral); }
 
-  /* Offer card */
-  .offer-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-    border: 2px solid;
-  }
+  .offer-card { background: var(--white); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; border: 2px solid; }
   .offer-a { border-color: var(--green); }
   .offer-b { border-color: var(--amber); }
   .offer-c { border-color: var(--coral); }
 
-  .offer-label {
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.4rem;
-  }
+  .offer-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
   .label-a { color: var(--green); }
   .label-b { color: var(--amber); }
   .label-c { color: var(--coral); }
 
-  .offer-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text);
-    margin-bottom: 0.25rem;
-  }
+  .offer-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: var(--text); margin-bottom: 1.25rem; }
 
-  .offer-price {
-    font-size: 32px;
-    font-weight: 500;
-    margin-bottom: 1.25rem;
-    line-height: 1;
-  }
-  .price-a { color: var(--green-dark); }
-  .price-b { color: var(--amber); }
-  .price-c { color: var(--coral); }
-  .offer-price span { font-size: 15px; color: var(--text-muted); font-weight: 400; }
-
-  .offer-features {
-    list-style: none;
-    margin-bottom: 1.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
-  }
-  .offer-features li {
-    font-size: 14px;
-    color: var(--text);
-    padding: 7px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    border-bottom: 1px solid var(--border);
-    line-height: 1.5;
-  }
+  .offer-features { list-style: none; margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+  .offer-features li { font-size: 14px; color: var(--text); padding: 7px 0; display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid var(--border); line-height: 1.5; }
   .offer-features li:last-child { border-bottom: none; }
-  .check {
-    font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .check { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Contact block */
+  .contact-block { margin-bottom: 1rem; }
+  .contact-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .contact-options { display: flex; flex-direction: column; gap: 10px; }
 
   .cta-btn {
     width: 100%;
@@ -442,6 +201,9 @@
     font-family: 'DM Sans', sans-serif;
     transition: all 0.2s ease;
     letter-spacing: 0.01em;
+    text-decoration: none;
+    display: block;
+    text-align: center;
   }
   .cta-btn:hover { transform: translateY(-1px); }
   .cta-a { background: var(--green); color: white; }
@@ -450,67 +212,33 @@
   .cta-b:hover { background: #996010; box-shadow: 0 6px 20px rgba(186,117,23,0.3); }
   .cta-c { background: var(--coral); color: white; }
   .cta-c:hover { background: #993C1D; box-shadow: 0 6px 20px rgba(216,90,48,0.3); }
+  .cta-outline { background: transparent; border: 1.5px solid; }
+  .cta-outline-a { border-color: var(--green); color: var(--green); }
+  .cta-outline-a:hover { background: var(--green-light); }
+  .cta-outline-b { border-color: var(--amber); color: var(--amber); }
+  .cta-outline-b:hover { background: var(--amber-light); }
+  .cta-outline-c { border-color: var(--coral); color: var(--coral); }
+  .cta-outline-c:hover { background: var(--coral-light); }
 
-  .reassure {
-    font-size: 13px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 0.75rem;
-    line-height: 1.5;
-  }
-
+  .reassure { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-
-  .other-offers {
-    font-size: 13px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
+  .other-offers { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 1rem; }
   .other-links { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .other-link {
-    font-size: 13px;
-    padding: 7px 16px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    background: var(--white);
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
+  .other-link { font-size: 13px; padding: 7px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--white); color: var(--text-muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
   .other-link:hover { border-color: var(--text-muted); color: var(--text); }
 
-  .restart-btn {
-    display: block;
-    text-align: center;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 13px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    margin-top: 1.5rem;
-    text-decoration: underline;
-    width: 100%;
-  }
+  .restart-btn { display: block; text-align: center; background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 1.5rem; text-decoration: underline; width: 100%; }
 
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 12px;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border);
-    background: var(--white);
-  }
+  .footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--white); }
   .footer a { color: var(--green); text-decoration: none; }
+
+  /* Video embed placeholder */
+  .video-wrap { background: #f0f0ea; border-radius: var(--radius); padding: 2rem; text-align: center; margin-bottom: 1.25rem; border: 1.5px dashed var(--border); }
+  .video-wrap p { font-size: 14px; color: var(--text-muted); margin-top: 0.5rem; }
 
   @media (max-width: 480px) {
     .question { font-size: 22px; }
     .result-title { font-size: 24px; }
-    .offer-price { font-size: 28px; }
     .header { padding: 1rem; }
     .main { padding: 1.5rem 1rem 3rem; }
   }
@@ -568,7 +296,7 @@
     <div class="step" id="s2">
       <span class="question-tag">Objectif</span>
       <h2 class="question">Pourquoi veux-tu un système aquaponique ?</h2>
-      <p class="sub">Ton objectif détermine le niveau d'investissement le plus logique.</p>
+      <p class="sub">Ton objectif détermine la solution la plus logique pour toi.</p>
       <div class="choices">
         <button class="choice-btn" data-q="2" data-v="autonomie" onclick="selectAnswer(this)">
           <div class="choice-icon">🥗</div>
@@ -612,7 +340,7 @@
       <div class="nav"><button class="btn-back" onclick="prevStep(2)">← Retour</button><button class="btn-next" id="n3" disabled onclick="nextStep(3)">Continuer →</button></div>
     </div>
 
-    <!-- Q4 — clé de tri -->
+    <!-- Q4 -->
     <div class="step" id="s4">
       <span class="question-tag">Implication</span>
       <h2 class="question">Combien de temps veux-tu consacrer à ton système ?</h2>
@@ -723,115 +451,139 @@
           <input type="email" id="email" placeholder="ton@email.com" oninput="checkCapture()">
         </div>
       </div>
-      <p class="privacy-note"><span>🔒</span> Tes données sont confidentielles. Aucun spam, promis.</p>
-      <div class="nav"><button class="btn-back" onclick="prevStep(7)">← Retour</button><button class="btn-next" id="n8" disabled onclick="showResult()" style="padding: 13px 24px;">Voir mon diagnostic →</button></div>
+      <p class="privacy-note">🔒 Tes données sont confidentielles. Aucun spam, promis.</p>
+      <div class="nav"><button class="btn-back" onclick="prevStep(7)">← Retour</button><button class="btn-next" id="n8" disabled onclick="submitAndShow()">Voir mon diagnostic →</button></div>
     </div>
 
-    <!-- Résultat A -->
+    <!-- Sending state -->
+    <div class="sending-msg" id="sending">
+      ⏳ Enregistrement de ton diagnostic en cours...
+    </div>
+
+    <!-- ===== RÉSULTAT A — Accompagnement formation ===== -->
     <div class="result" id="result-a">
-      <div class="result-header">
-        <div class="profile-badge badge-a">✦ Profil A — Le Constructeur Autonome</div>
-        <h2 class="result-title" id="ra-title">Bonne nouvelle !</h2>
-        <p class="result-intro">Tu as la motivation et l'envie de comprendre — c'est l'essentiel. Sans méthode claire, tu risques des erreurs coûteuses qui auraient pu être évitées. Le vrai problème en aquaponie n'est jamais la motivation, c'est de partir dans la mauvaise direction.</p>
-      </div>
+      <div class="profile-badge badge-a">✦ Profil A — Le Constructeur Autonome</div>
+      <h2 class="result-title" id="ra-title">Bonne nouvelle !</h2>
+      <p class="result-intro">Tu as la motivation et l'envie de comprendre — c'est l'essentiel. Sans méthode claire, tu risques des erreurs coûteuses qui auraient pu être évitées. Notre accompagnement est fait exactement pour toi.</p>
+
       <div class="diag-box">
         <p class="diag-title">Ce qui te manque aujourd'hui</p>
         <div class="diag-item"><span class="diag-dot dot-a"></span>Une méthode structurée et validée sur le terrain</div>
         <div class="diag-item"><span class="diag-dot dot-a"></span>Un dimensionnement adapté à TON espace et TON budget</div>
         <div class="diag-item"><span class="diag-dot dot-a"></span>Un regard expert pour éviter les erreurs invisibles au départ</div>
       </div>
+
       <div class="offer-card offer-a">
         <p class="offer-label label-a">Notre recommandation</p>
-        <p class="offer-name">Accompagnement T'Air Eau — 3 mois</p>
-        <p class="offer-price price-a">700 € <span>/ paiement en 1, 2 ou 3 fois</span></p>
+        <p class="offer-name">Accompagnement T'Air Eau — Formation 3 mois</p>
         <ul class="offer-features">
-          <li><span class="check">✓</span> Dimensionnement personnalisé pour ton installation</li>
+          <li><span class="check">✓</span> Optimisation de l'emplacement de ton installation</li>
           <li><span class="check">✓</span> Méthode complète pas à pas (eau, poissons, plantes)</li>
           <li><span class="check">✓</span> Support expert et suivi sur 3 mois</li>
           <li><span class="check">✓</span> Accès à la communauté privée</li>
           <li><span class="check">✓</span> Sessions live hebdomadaires</li>
-          <li><span class="check">✓</span> Garantie 30 jours satisfait ou remboursé</li>
         </ul>
-        <button class="cta-btn cta-a" onclick="window.location.href='https://www.taireau.fr'">Découvrir l'accompagnement →</button>
+
+        <div class="contact-block">
+          <p class="contact-label">Contacter Stella pour en savoir plus</p>
+          <div class="contact-options">
+            <a href="tel:+33661335488" class="cta-btn cta-a">📞 Appeler Stella — 06 61 33 54 88</a>
+            <a href="/cdn-cgi/l/email-protection#55313c323c21303939341521343c273034207b33276a2620373f30362168113038343b313070676531723c3b333a273834213c3a3b706765787067651436363a382534323b3038303b21706765333a273834213c3a3b73373a312c68173a3b3f3a20277067650621303939347067167065147065141f72343c7067652796fc34393c2696fc706765393070676524203c2f7067650172143c2770676510342070676530217067653f30706765263a203d343c2130706765303b7067652634233a3c277067652539202670676526202770676539723436363a382534323b3038303b21706765333a273834213c3a3b7b" class="cta-btn cta-outline cta-outline-a">✉️ Écrire à Stella — <span class="__cf_email__" data-cfemail="c1a5a8a6a8b5a4adada081b5a0a8b3a4a0b4efa7b3">[email&#160;protected]</span></a>
+          </div>
+        </div>
       </div>
+
       <p class="reassure">Cet accompagnement existe pour t'éviter les erreurs que nous avons mis des années à corriger.</p>
       <hr class="divider">
       <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
       <div class="other-links">
-        <button class="other-link" onclick="forceResult('b')">Kit + Formation (3 250 €)</button>
-        <button class="other-link" onclick="forceResult('c')">Clé en main (5 000 €+)</button>
+        <button class="other-link" onclick="forceResult('b')">Kit aquaponique</button>
+        <button class="other-link" onclick="forceResult('c')">Installation clé en main</button>
       </div>
       <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
     </div>
 
-    <!-- Résultat B -->
+    <!-- ===== RÉSULTAT B — Kit ===== -->
     <div class="result" id="result-b">
-      <div class="result-header">
-        <div class="profile-badge badge-b">✦ Profil B — Le Pragmatique Sécurisé</div>
-        <h2 class="result-title" id="rb-title">Tu veux un système fiable.</h2>
-        <p class="result-intro">Tu es prêt à investir pour gagner du temps et de la sécurité. Très bon choix : en aquaponie, la conception est le point critique que 80 % des débutants sous-estiment. La majorité des systèmes DIY échouent à cause d'un mauvais choix de composants ou d'un mauvais équilibre eau/poissons/plantes.</p>
-      </div>
+      <div class="profile-badge badge-b">✦ Profil B — Le Pragmatique Sécurisé</div>
+      <h2 class="result-title" id="rb-title">Tu veux un système fiable.</h2>
+      <p class="result-intro">Tu es prêt à investir pour gagner du temps et de la sécurité. Très bon choix : en aquaponie, la conception est le point critique que 80 % des débutants sous-estiment. Notre kit est fait pour toi.</p>
+
       <div class="diag-box">
         <p class="diag-title">Pourquoi le kit est la solution la plus logique pour toi</p>
         <div class="diag-item"><span class="diag-dot dot-b"></span>Tu pars sur une base testée et validée, pas sur des essais-erreurs</div>
         <div class="diag-item"><span class="diag-dot dot-b"></span>Les composants sont déjà optimisés pour fonctionner ensemble</div>
-        <div class="diag-item"><span class="diag-dot dot-b"></span>La formation incluse te donne l'autonomie sur le long terme</div>
+        <div class="diag-item"><span class="diag-dot dot-b"></span>Une vidéo explicative t'accompagne pour l'installation</div>
       </div>
+
       <div class="offer-card offer-b">
         <p class="offer-label label-b">Notre recommandation</p>
-        <p class="offer-name">Système en kit + Formation complète</p>
-        <p class="offer-price price-b">3 250 € <span>/ paiement en plusieurs fois possible</span></p>
+        <p class="offer-name">Système aquaponique en kit T'Air Eau</p>
         <ul class="offer-features">
-          <li><span class="check">✓</span> Kit aquaponique complet testé et optimisé (3 000 €)</li>
-          <li><span class="check">✓</span> Formation complète pour une gestion autonome (250 €)</li>
+          <li><span class="check">✓</span> Kit aquaponique complet testé et optimisé</li>
           <li><span class="check">✓</span> Tous les composants validés, installation rapide</li>
+          <li><span class="check">✓</span> Vidéo explicative d'installation incluse</li>
           <li><span class="check">✓</span> Système évolutif selon tes ambitions</li>
-          <li><span class="check">✓</span> Support technique inclus</li>
         </ul>
-        <button class="cta-btn cta-b" onclick="window.location.href='https://www.taireau.fr'">Voir le kit + la formation →</button>
+
+        <div class="contact-block">
+          <p class="contact-label">Contacter Stella pour commander</p>
+          <div class="contact-options">
+            <a href="tel:+33661335488" class="cta-btn cta-b">📞 Appeler Stella — 06 61 33 54 88</a>
+            <a href="/cdn-cgi/l/email-protection#22464b454b56474e4e436256434b504743570c44501d515740484741561f66474f434c464707101246054b4c444d504f43564b4d4c0710120f071012694b5607101243535743524d4c4b53574704404d465b1f604d4c484d57500710127156474e4e430710610712630712636805434b07101250e18b434e4b51e18b0710124e4707101253574b580710127605634b5007101267435707101247560710124847071012514d574a434b5647071012474c0710125143544d4b50071012524e57510710125157500710124e47071012494b5607101243535743524d4c4b5357470c" class="cta-btn cta-outline cta-outline-b">✉️ Écrire à Stella — <span class="__cf_email__" data-cfemail="2b4f424c425f4e47474a6b5f4a42594e4a5e054d59">[email&#160;protected]</span></a>
+          </div>
+        </div>
       </div>
+
       <p class="reassure">Tu investis dans un système qui fonctionne, pas dans des essais-erreurs.</p>
       <hr class="divider">
       <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
       <div class="other-links">
-        <button class="other-link" onclick="forceResult('a')">Accompagnement (700 €)</button>
-        <button class="other-link" onclick="forceResult('c')">Clé en main (5 000 €+)</button>
+        <button class="other-link" onclick="forceResult('a')">Accompagnement formation</button>
+        <button class="other-link" onclick="forceResult('c')">Installation clé en main</button>
       </div>
       <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
     </div>
 
-    <!-- Résultat C -->
+    <!-- ===== RÉSULTAT C — Clé en main ===== -->
     <div class="result" id="result-c">
-      <div class="result-header">
-        <div class="profile-badge badge-c">✦ Profil C — Zéro Prise de Tête</div>
-        <h2 class="result-title" id="rc-title">Ton objectif est clair.</h2>
-        <p class="result-intro">Un système qui fonctionne parfaitement, sans charge mentale. Tu ne veux pas bricoler pendant des mois ni douter à chaque étape. Un système aquaponique performant dépend de l'environnement, de l'espace, des contraintes locales — impossible à standardiser à 100 % sans te connaître.</p>
-      </div>
+      <div class="profile-badge badge-c">✦ Profil C — Zéro Prise de Tête</div>
+      <h2 class="result-title" id="rc-title">Ton objectif est clair.</h2>
+      <p class="result-intro">Un système qui fonctionne parfaitement, sans charge mentale. Tu ne veux pas bricoler pendant des mois ni douter à chaque étape. Notre installation sur-mesure est la solution qui te correspond.</p>
+
       <div class="diag-box">
         <p class="diag-title">Pourquoi l'installation sur-mesure s'impose pour toi</p>
         <div class="diag-item"><span class="diag-dot dot-c"></span>Ton environnement et tes contraintes sont uniques</div>
         <div class="diag-item"><span class="diag-dot dot-c"></span>La mise en service experte garantit la stabilité immédiate</div>
         <div class="diag-item"><span class="diag-dot dot-c"></span>Tu as un système stable et productif dès le premier jour</div>
       </div>
+
       <div class="offer-card offer-c">
         <p class="offer-label label-c">Notre recommandation</p>
         <p class="offer-name">Installation aquaponique clé en main</p>
-        <p class="offer-price price-c">À partir de 5 000 € <span>/ étude personnalisée</span></p>
         <ul class="offer-features">
           <li><span class="check">✓</span> Étude personnalisée de ton projet et de ton espace</li>
           <li><span class="check">✓</span> Conception adaptée à tes contraintes spécifiques</li>
           <li><span class="check">✓</span> Installation chez toi par l'équipe T'Air Eau</li>
-          <li><span class="check">✓</span> Mise en service complète + formation incluse</li>
+          <li><span class="check">✓</span> Mise en service complète</li>
           <li><span class="check">✓</span> Suivi post-installation garanti</li>
         </ul>
-        <button class="cta-btn cta-c" onclick="window.location.href='https://www.taireau.fr'">Réserver un appel projet →</button>
+
+        <div class="contact-block">
+          <p class="contact-label">Contacter Timothée pour ton projet</p>
+          <div class="contact-options">
+            <a href="tel:+33607502376" class="cta-btn cta-c">📞 Appeler Timothée — 06 07 50 23 76</a>
+            <a href="/cdn-cgi/l/email-protection#86f5e7f3f4e3eaa8f2efebe9f2eee3e3c6e1ebe7efeaa8e5e9ebb9f5f3e4ece3e5f2bbc2e3ebe7e8e2e3a3b4b6e2e3a3b4b6e2e3f0eff5a3b4b6aba3b4b6cfe8f5f2e7eaeae7f2efe9e8a3b4b6e5ea452fa3b4b6e3e8a3b4b6ebe7efe8a0e4e9e2ffbbc4e9e8ece9f3f4a3b4b6d2efebe9f2ee452fe3a3b4c5a3b6c7a3b6c7cca1e7efa3b4b6f4452fe7eaeff5452fa3b4b6eae3a3b4b6f7f3effca3b4b6d2a1c7eff4a3b4b6c3e7f3a3b4b6e3f2a3b4b6ece3a3b4b6f5e9f3eee7eff2e3a3b4b6e2eff5e5f3f2e3f4a3b4b6e2a1f3e8e3a3b4b6efe8f5f2e7eaeae7f2efe9e8a3b4b6e5ea452fa3b4b6e3e8a3b4b6ebe7efe8a8" class="cta-btn cta-outline cta-outline-c">✉️ Écrire à Timothée — <span class="__cf_email__" data-cfemail="f685978384939ad8829f9b99829e9393b6919b979f9ad895999b">[email&#160;protected]</span></a>
+          </div>
+        </div>
       </div>
+
       <p class="reassure">Tu n'achètes pas un système. Tu achètes la tranquillité d'esprit.</p>
       <hr class="divider">
       <p class="other-offers">Tu veux comparer avec les autres formules ?</p>
       <div class="other-links">
-        <button class="other-link" onclick="forceResult('a')">Accompagnement (700 €)</button>
-        <button class="other-link" onclick="forceResult('b')">Kit + Formation (3 250 €)</button>
+        <button class="other-link" onclick="forceResult('a')">Accompagnement formation</button>
+        <button class="other-link" onclick="forceResult('b')">Kit aquaponique</button>
       </div>
       <button class="restart-btn" onclick="restart()">Recommencer le quiz</button>
     </div>
@@ -843,14 +595,26 @@
   © 2025 T'Air Eau — <a href="https://www.taireau.fr">taireau.fr</a> · Mentions légales · Confidentialité
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ============================================================
+// REMPLACE CETTE URL par ton URL Google Apps Script
+// (voir le guide d'installation Google Sheets ci-dessous)
+// ============================================================
+var GOOGLE_SCRIPT_URL = 'COLLE_TON_URL_ICI';
+
 var answers = {};
+var labelQ1 = { debutant: 'Découvre complètement', projet: 'Projet sans concret', essayé: 'A essayé sans succès', systeme: 'Système en cours' };
+var labelQ2 = { autonomie: 'Autonomie alimentaire', production: 'Production sérieuse', tranquillite: 'Tranquillité', evolution: 'Projet évolutif' };
+var labelQ3 = { interieur: 'Intérieur / balcon', 'jardin-s': 'Jardin < 50m²', 'jardin-l': 'Grand jardin / serre' };
+var labelQ4 = { minimum: 'Minimum possible', quelques: 'Quelques heures/semaine', bricoleur: 'DIY passionné' };
+var labelQ5 = { 'guidé': 'Préfère être guidé', test: 'Apprend en testant', 'résultat': 'Veut résultat sûr' };
+var labelQ6 = { poissons: 'Peur de tuer les poissons', instable: 'Peur système instable', perte: 'Peur de perdre argent/temps', seul: 'Peur d\'être seul' };
+var labelQ7 = { comprendre: 'Comprendre le système', produire: 'Produire efficacement', serein: 'Être serein', tranquille: 'Zéro question technique' };
+var profileLabels = { a: 'Profil A — Constructeur Autonome', b: 'Profil B — Pragmatique Sécurisé', c: 'Profil C — Zéro Prise de Tête' };
 
 function selectAnswer(btn) {
   var q = btn.getAttribute('data-q');
-  document.querySelectorAll('[data-q="' + q + '"]').forEach(function(b) {
-    b.classList.remove('selected');
-  });
+  document.querySelectorAll('[data-q="' + q + '"]').forEach(function(b) { b.classList.remove('selected'); });
   btn.classList.add('selected');
   answers[q] = btn.getAttribute('data-v');
   var nextBtn = document.getElementById('n' + q);
@@ -859,9 +623,8 @@ function selectAnswer(btn) {
 
 function nextStep(from) {
   document.getElementById('s' + from).classList.remove('active');
-  var to = from + 1;
-  document.getElementById('s' + to).classList.add('active');
-  updateProgress(to);
+  document.getElementById('s' + (from + 1)).classList.add('active');
+  updateProgress(from + 1);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -875,11 +638,7 @@ function prevStep(to) {
 function updateProgress(step) {
   var pct = Math.round((step / 8) * 100);
   document.getElementById('prog').style.width = pct + '%';
-  if (step <= 7) {
-    document.getElementById('prog-count').textContent = step + ' / 7';
-  } else {
-    document.getElementById('prog-count').textContent = 'Presque terminé !';
-  }
+  document.getElementById('prog-count').textContent = step <= 7 ? (step + ' / 7') : 'Presque terminé !';
 }
 
 function checkCapture() {
@@ -908,45 +667,52 @@ function computeProfile() {
   return 'a';
 }
 
-function showResult() {
+function submitAndShow() {
   var prenom = document.getElementById('prenom').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var profile = computeProfile();
+
+  // Hide step 8, show sending
   document.getElementById('s8').classList.remove('active');
+  document.getElementById('sending').classList.add('active');
   document.getElementById('prog').style.width = '100%';
   document.getElementById('prog-count').textContent = 'Diagnostic prêt !';
-  var profile = computeProfile();
-  displayResult(profile, prenom);
+
+  // Build data payload
+  var data = {
+    prenom: prenom,
+    email: email,
+    profil: profileLabels[profile],
+    q1_niveau: labelQ1[answers[1]] || '',
+    q2_objectif: labelQ2[answers[2]] || '',
+    q3_espace: labelQ3[answers[3]] || '',
+    q4_temps: labelQ4[answers[4]] || '',
+    q5_attitude: labelQ5[answers[5]] || '',
+    q6_peur: labelQ6[answers[6]] || '',
+    q7_projection: labelQ7[answers[7]] || '',
+    date: new Date().toLocaleString('fr-FR')
+  };
+
+  // Send to Google Sheets (if URL configured)
+  if (GOOGLE_SCRIPT_URL !== 'COLLE_TON_URL_ICI') {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(function() {
+      // Silently fail — show result anyway
+    });
+  }
+
+  // Show result after short delay
+  setTimeout(function() {
+    document.getElementById('sending').classList.remove('active');
+    displayResult(profile, prenom);
+  }, 800);
 }
 
 function displayResult(profile, prenom) {
   document.querySelectorAll('.result').forEach(function(r) { r.classList.remove('active'); });
-  var r = document.getElementById('result-' + profile);
-  r.classList.add('active');
-  if (prenom) {
-    var titles = { a: 'Bonne nouvelle, ' + prenom + ' !', b: 'Tu veux un système fiable, ' + prenom + '.', c: 'Ton objectif est clair, ' + prenom + '.' };
-    var el = document.getElementById('r' + profile + '-title');
-    if (el && titles[profile]) el.textContent = titles[profile];
-  }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function forceResult(profile) {
-  var prenom = document.getElementById('prenom') ? document.getElementById('prenom').value.trim() : '';
-  displayResult(profile, prenom);
-}
-
-function restart() {
-  answers = {};
-  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
-  document.querySelectorAll('.result').forEach(function(r) { r.classList.remove('active'); });
-  document.querySelectorAll('.choice-btn').forEach(function(b) { b.classList.remove('selected'); });
-  document.querySelectorAll('.btn-next').forEach(function(b) { b.disabled = true; });
-  if (document.getElementById('prenom')) document.getElementById('prenom').value = '';
-  if (document.getElementById('email')) document.getElementById('email').value = '';
-  document.getElementById('s1').classList.add('active');
-  updateProgress(1);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-</script>
-
-</body>
-</html>
+  document.getElementById('result-' + profile).classList.add('active');
+  var titles = { a: 'Bonne nouvelle, ' + prenom +
